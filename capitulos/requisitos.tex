@@ -1,0 +1,169 @@
+\chapter{Levantamento e Análise de Requisitos}\label{chp:req}
+
+Este capítulo documenta o levantamento e a análise dos requisitos do mecanismo proposto: um proxy de segurança, posicionado entre as ferramentas de desenvolvimento assistidas por LLM e os provedores externos de IA, capaz de identificar e redigir dados sensíveis no tráfego HTTP em trânsito. O objetivo é tornar explícito \textit{para quem} a solução é construída, \textit{o que} ela deve fazer (requisitos funcionais) e \textit{com que qualidade} deve fazê-lo (requisitos não funcionais), de modo que as decisões de projeto (Capítulo~\ref{chp:proj}), a implementação (Capítulo~\ref{chp:dev}) e os testes (Capítulo~\ref{chp:test}) possam ser rastreados até uma necessidade declarada.
+
+\section{Abordagem de Levantamento}
+\label{sec:req_abordagem}
+
+O levantamento combinou quatro fontes de informação, citadas a seguir em ordem decrescente de peso na formulação dos requisitos:
+
+\begin{enumerate}
+    \item \textbf{Lacunas da literatura.} A revisão sistemática (Capítulo~\ref{chp:fund}) evidenciou que nenhum dos trabalhos analisados combina, ao mesmo tempo, a interceptação de tráfego HTTP em tempo real, o agnosticismo em relação à ferramenta cliente e ao provedor de destino e a avaliação do impacto operacional da camada de proteção. Esses três eixos originam, respectivamente, os requisitos de interceptação, de compatibilidade e de desempenho.
+    \item \textbf{Natureza do domínio.} O tráfego de assistentes de código é, em sua maioria, HTTPS com corpo JSON, e o conteúdo enviado pode incluir credenciais, \textit{tokens} e identificadores internos. Isso impõe a terminação TLS local (e, portanto, a gestão de uma autoridade certificadora própria) e a análise do corpo da requisição.
+    \item \textbf{Prototipação evolutiva.} Os incrementos descritos na Seção~\ref{sec:dev_incrementos} funcionaram como protótipos: parte dos requisitos (por exemplo, o modo de simulação e o diagnóstico do ambiente) emergiu do uso do próprio mecanismo em ferramentas reais.
+    \item \textbf{Análise documental do artefato.} A documentação e o código do repositório foram revisados para garantir que cada requisito esteja associado ao componente que o realiza e ao seu estado de implementação.
+\end{enumerate}
+
+Os requisitos são identificados por \textbf{RF} (funcionais) e \textbf{RNF} (não funcionais) e priorizados pela técnica MoSCoW, na qual \textit{Deve} indica requisito indispensável ao mecanismo cumprir sua finalidade, \textit{Deveria} indica requisito importante, mas contornável, e \textit{Poderia} indica requisito desejável. A coluna \textit{Situação} registra o estado de realização: \textit{Implementado} (presente no código), \textit{Parcial} (presente com limitação conhecida, descrita no Capítulo~\ref{chp:test}) ou \textit{Planejado}.
+
+
+\section{Identificação dos Usuários}
+\label{sec:req_usuarios}
+
+Foram identificados cinco perfis, entre usuários diretos, usuários indiretos e partes interessadas. Os perfis foram construídos a partir do contexto de uso descrito na fundamentação teórica e das funcionalidades expostas pelo mecanismo; sua validação com usuários é tratada na Seção~\ref{sec:test_usuarios}.
+
+\begin{table}[htb]
+\centering
+\caption{Perfis de usuários e partes interessadas}\label{tab:usuarios}
+\small
+\begin{tabular}{|p{3.1cm}|p{4.6cm}|p{4.6cm}|p{2.6cm}|}
+\hline
+\textbf{Perfil} & \textbf{Necessidades e motivações} & \textbf{Interação com a solução} & \textbf{Tipo} \\ \hline
+Desenvolvedor de software & Usar assistentes de código sem expor segredos do projeto; não perder produtividade nem alterar sua ferramenta de IA. & Inicia o proxy, aponta a ferramenta para a porta local, acompanha eventos na TUI e executa o diagnóstico do ambiente. & Usuário primário \\ \hline
+Responsável por segurança e governança & Definir quais categorias de dados não podem sair da organização; comprovar, por registros, o que foi interceptado. & Edita padrões de detecção (embutidos e personalizados), configura modo e \textit{hosts}, consulta a trilha de auditoria. & Usuário secundário \\ \hline
+Mantenedor / contribuidor & Evoluir o código, publicar versões e manter a documentação consistente. & Compila, executa testes e \textit{benchmarks}, publica binários e atualiza a documentação. & Usuário técnico \\ \hline
+Provedor de LLM & Receber requisições válidas e íntegras, sem ser alterado. & Recebe a requisição já sanitizada; não interage diretamente com a solução. & Sistema externo \\ \hline
+Avaliadores acadêmicos (orientação e banca) & Verificar reprodutibilidade, rastreabilidade e evidências do experimento. & Consultam documentação, repositório e registros de teste. & Parte interessada \\ \hline
+\end{tabular}
+\fonte{Elaborado pela equipe(2026).}
+\end{table}
+
+\subsection{Cenário de uso de referência}
+
+O cenário que orienta o projeto é o de um desenvolvedor que utiliza uma ferramenta de linha de comando ou uma extensão de IDE para pedir ajuda a um LLM sobre um trecho de código. Para fornecer contexto, a ferramenta monta uma requisição HTTPS contendo o \textit{prompt}, arquivos abertos e, eventualmente, o conteúdo de arquivos de configuração (como arquivos \texttt{.env}) que carregam chaves de API. O mecanismo proposto é executado na máquina do desenvolvedor; a ferramenta de IA é configurada para usá-lo como proxy; e, antes de a requisição alcançar o provedor, as credenciais reconhecidas são substituídas por um marcador, enquanto um registro de auditoria sem o conteúdo da requisição é gravado.
+
+\section{Requisitos Funcionais}
+\label{sec:req_rf}
+
+O Tabela~\ref{tab:rf} lista os requisitos funcionais, a prioridade, o componente responsável (cf. Capítulo~\ref{chp:proj}) e a situação atual.
+
+{\small
+\begin{longtable}{|p{1.15cm}|p{7.6cm}|p{1.7cm}|p{2.2cm}|p{2.0cm}|}
+\caption{Requisitos funcionais}\label{tab:rf}\\
+\hline
+\textbf{ID} & \textbf{Descrição (o sistema deve\ldots)} & \textbf{Prior.} & \textbf{Componente} & \textbf{Situação} \\ \hline
+\endfirsthead
+\hline
+\textbf{ID} & \textbf{Descrição (o sistema deve\ldots)} & \textbf{Prior.} & \textbf{Componente} & \textbf{Situação} \\ \hline
+\endhead
+RF01 & atuar como proxy HTTP/HTTPS local, escutando em porta configurável (padrão 9000), para que ferramentas de IA possam ser apontadas para ele. & Deve & Proxy MITM & Implementado \\ \hline
+RF02 & gerar, na primeira execução, uma autoridade certificadora (CA) local e persistir o par certificado/chave, reutilizando-o nas execuções seguintes. & Deve & Gestor de CA & Implementado \\ \hline
+RF03 & instalar a CA no repositório de certificados do sistema operacional (macOS, Linux e Windows), informando falhas como aviso. & Deve & Instalador de CA & Implementado \\ \hline
+RF04 & terminar o TLS das conexões interceptadas, emitindo certificados assinados pela CA local, de modo a acessar o corpo das requisições. & Deve & Proxy MITM & Implementado \\ \hline
+RF05 & analisar apenas requisições \texttt{POST} ou \texttt{PUT} com corpo JSON (ou formulário), limitando a análise a corpos de até 5~MiB. & Deve & Filtro & Implementado \\ \hline
+RF06 & oferecer dois modos de operação: \textit{whitelist} (somente \textit{hosts} permitidos) e \textit{passive} (todos os \textit{hosts}, exceto os ignorados). & Deve & Filtro; Configuração & Implementado \\ \hline
+RF07 & ignorar \textit{hosts} de telemetria e análise de uso configuráveis, com suporte a curingas. & Deve & Filtro & Implementado \\ \hline
+RF08 & identificar requisições destinadas a LLM pela inspeção do corpo (campos como \texttt{model}, \texttt{messages}, \texttt{contents}, \texttt{prompt}, \texttt{input}), e não pelo \textit{host} de destino. & Deve & Filtro & Implementado \\ \hline
+RF09 & inferir o provedor e o modelo a partir do corpo e, na falta de indícios, a partir do \textit{host}. & Deveria & Inferência de provedor & Implementado \\ \hline
+RF10 & detectar credenciais por padrões embutidos (chaves OpenAI, OpenAI de projeto, Anthropic, Google, GitHub, Slack, Discord e AWS). & Deve & Analisador & Implementado \\ \hline
+RF11 & permitir ativar ou desativar cada padrão embutido por configuração. & Deveria & Configuração & Implementado \\ \hline
+RF12 & aceitar padrões personalizados por expressão regular ou por lista de valores literais, cada um com rótulo e indicador de habilitação, ignorando com aviso os padrões inválidos. & Deve & Analisador; Configuração & Implementado \\ \hline
+RF13 & substituir cada ocorrência detectada pelo rótulo do padrão antes do encaminhamento, mantendo consistente o tamanho declarado do corpo. & Deve & Analisador; Proxy MITM & Implementado \\ \hline
+RF14 & oferecer modo de simulação (\textit{dry-run}) que detecta e registra sem alterar a requisição. & Deveria & Analisador & Implementado \\ \hline
+RF15 & registrar trilha de auditoria em JSON Lines, com identificação de requisição, sessão e máquina, destino, provedor, modelo, padrões detectados, contagens e latências, sem gravar o conteúdo da requisição. & Deve & Auditoria & Implementado \\ \hline
+RF16 & registrar também as requisições ignoradas e os erros de conexão, devolvendo resposta de erro explícita ao cliente em caso de falha de conexão. & Deveria & Proxy MITM; Auditoria & Implementado \\ \hline
+RF17 & carregar configuração YAML opcional e, na sua ausência, operar com os padrões embutidos e a porta 9000. & Deve & Configuração & Implementado \\ \hline
+RF18 & oferecer interface de terminal (TUI) com painel em tempo real: contadores de requisições, redigidas e erros, provedores observados e últimos eventos. & Deveria & TUI & Implementado \\ \hline
+RF19 & permitir, na TUI, gerenciar padrões embutidos e personalizados (criar, editar, ativar, excluir), validando expressões regulares e persistindo a configuração. & Deveria & TUI; Configuração & Implementado \\ \hline
+RF20 & permitir, na TUI, editar porta, modo e listas de \textit{hosts} do proxy, com confirmação de alterações não salvas. & Deveria & TUI; Configuração & Implementado \\ \hline
+RF21 & oferecer subcomando de diagnóstico que verifique a instalação da CA e a disponibilidade da porta. & Poderia & Diagnóstico & Implementado \\ \hline
+RF22 & oferecer subcomandos de ajuda e de versão. & Poderia & Ponto de entrada & Implementado \\ \hline
+RF23 & encerrar de forma controlada ao receber sinal de término, persistindo o registro de auditoria. & Deve & Ponto de entrada; Auditoria & Implementado \\ \hline
+RF24 & ser distribuído como binário para as plataformas suportadas, acompanhado de \textit{checksums} SHA-256, com instalação assistida (Homebrew e \textit{script} PowerShell). & Deveria & Distribuição (CI) & Implementado \\ \hline
+RF25 & permitir a extensão por \textit{plugins} de padrões personalizados. & Poderia & --- & Planejado \\ \hline
+\end{longtable}
+}
+\noindent\fonte{Elaborado pela equipe (2026), a partir da análise do repositório do projeto.}
+
+
+\section{Requisitos Não Funcionais}
+\label{sec:req_rnf}
+
+Os requisitos não funcionais foram formulados, sempre que possível, com um critério mensurável e um método de verificação, de forma a permitir a avaliação objetiva no Capítulo~\ref{chp:test}. A atenção especial a desempenho e a falsos positivos decorre da literatura revisada: o custo de latência e a taxa de falsos positivos determinam a viabilidade de adoção de qualquer camada de proteção no fluxo diário do desenvolvedor \cite{tsebak2025enhancing}.
+
+{\small
+\begin{longtable}{|p{1.35cm}|p{2.3cm}|p{6.1cm}|p{3.4cm}|}
+\caption{Requisitos não funcionais}\label{tab:rnf}\\
+\hline
+\textbf{ID} & \textbf{Categoria} & \textbf{Requisito e critério de aceitação} & \textbf{Verificação} \\ \hline
+\endfirsthead
+\hline
+\textbf{ID} & \textbf{Categoria} & \textbf{Requisito e critério de aceitação} & \textbf{Verificação} \\ \hline
+\endhead
+RNF01 & Desempenho & A análise de uma requisição deve adicionar latência desprezível frente ao tempo de resposta de um LLM: média inferior a 3~ms por operação para corpos de até 1~MiB (o limiar de 3~ms é o do teste automatizado), medida com cargas de tamanho representativo. & Teste de latência; \textit{benchmark} com cargas de 1~KB a 5~MiB \\ \hline
+RNF02 & Desempenho & O proxy deve processar corpos de até 5~MiB sem corromper a requisição encaminhada. & Teste de carga e de limite (planejado) \\ \hline
+RNF03 & Precisão & Nenhum falso positivo nos casos de dados benignos do conjunto de teste (tolerância zero) e detecção de todos os formatos de credencial suportados. & Testes de detecção \\ \hline
+RNF04 & Segurança & A chave privada da CA deve ser gerada localmente (RSA de 4096 bits), gravada com permissão restrita e protegida contra versionamento acidental. & Inspeção de código e do \texttt{.gitignore} \\ \hline
+RNF05 & Privacidade & O registro de auditoria não deve conter o conteúdo das requisições nem os segredos detectados; o proxy não deve transmitir dados a destinos diferentes dos requisitados pelo cliente. & Inspeção de código e do esquema do registro \\ \hline
+RNF06 & Portabilidade & Operar em macOS (Intel e Apple Silicon), Linux (amd64) e Windows (amd64). & Matriz de compilação do CI; testes manuais por plataforma \\ \hline
+RNF07 & Instalabilidade & Ser entregue como binário único, sem dependências de execução, instalável por gerenciador de pacotes ou \textit{script}. & Inspeção; teste de instalação \\ \hline
+RNF08 & Usabilidade & A TUI deve funcionar em terminais de, no mínimo, 80 colunas, com atalhos documentados e validação imediata de entradas inválidas. & Teste com usuários \\ \hline
+RNF09 & Confiabilidade & Falhas de registro ou da TUI não devem bloquear o encaminhamento de requisições; conexões devem respeitar limites de tempo e falhas devem resultar em erro explícito. & Inspeção; teste manual de erro e de timeout \\ \hline
+RNF10 & Auditabilidade & Cada requisição processada deve gerar registro com identificador único de requisição, de sessão e de máquina, e carimbo de tempo em formato padronizado. & Inspeção do registro gerado \\ \hline
+RNF11 & Compatibilidade & Funcionar com qualquer ferramenta que permita configurar proxy, sem modificá-la, identificando requisições de IA pelo conteúdo. & Testes de identificação; teste de integração com ferramentas \\ \hline
+RNF12 & Configurabilidade & Padrões e modos de operação devem ser alteráveis sem recompilação. & Testes de configuração \\ \hline
+RNF13 & Manutenibilidade & Código organizado em pacotes coesos, com testes automatizados, integração contínua e documentação atualizada. & Inspeção; cobertura de testes \\ \hline
+RNF14 & Licenciamento & O código deve ser distribuído sob licença de código aberto (Apache~2.0). & Inspeção \\ \hline
+\end{longtable}
+}
+\noindent\fonte{Elaborado pela equipe (2026).}
+
+\section{Restrições, Premissas e Limitações Conhecidas}
+
+\begin{itemize}
+    \item \textbf{Confiança na CA local.} A interceptação de HTTPS só é possível porque o usuário instala e confia na CA gerada localmente, o que exige privilégios administrativos. A exposição da chave privada dessa CA permitiria a emissão de certificados válidos para qualquer domínio na máquina; por isso ela nunca deve sair do ambiente local (RNF04).
+    \item \textbf{Ferramentas compatíveis.} Apenas ferramentas que aceitam proxy HTTP(S) configurável e que confiam na CA do sistema (ou em uma CA adicional) podem ser protegidas. Clientes que fixam certificados (\textit{certificate pinning}) rejeitariam a interceptação.
+    \item \textbf{Escopo da inspeção.} Somente o corpo das requisições de saída é inspecionado e redigido; respostas dos provedores trafegam sem análise. A detecção baseia-se em padrões (expressões regulares e literais), não em classificação semântica.
+    \item \textbf{Ambiente.} A implementação utiliza a linguagem Go; o proxy opera na máquina do desenvolvedor, sem componente de servidor centralizado.
+\end{itemize}
+
+\section{Casos de Uso}
+\label{sec:req_uc}
+
+A Figura~\ref{fig:uc} apresenta os atores e os casos de uso principais, e o Tabela~\ref{tab:uc} resume cada caso de uso e os requisitos que ele realiza.
+
+\begin{figure}[htb]
+\centering
+\caption{Diagrama de casos de uso}\label{fig:uc}
+\diagrama{casosdeuso}{width=\textwidth}{Atores: Desenvolvedor, Responsável por segurança/governança, Mantenedor e Provedor de LLM. Casos de uso UC01 a UC10 (Tabela~\ref{tab:uc}), com \guillemotleft include\guillemotright{} de UC01 para UC02 e \guillemotleft extend\guillemotright{} de UC04 para UC03.}
+\fonte{Elaborado pela equipe (2026).}
+\end{figure}
+
+\begin{table}[htb]
+\centering
+\caption{Resumo dos casos de uso}\label{tab:uc}
+\small
+\begin{tabular}{|p{1.1cm}|p{3.7cm}|p{7.3cm}|p{2.5cm}|}
+\hline
+\textbf{ID} & \textbf{Caso de uso} & \textbf{Fluxo principal} & \textbf{Requisitos} \\ \hline
+UC01 & Iniciar o proxy & O desenvolvedor executa o binário (com ou sem TUI); o sistema garante a CA, carrega a configuração e passa a escutar na porta definida. & RF01, RF02, RF17, RF18, RF23 \\ \hline
+UC02 & Instalar e confiar na CA local & Na primeira execução, o sistema gera a CA e tenta instalá-la no repositório do sistema operacional, exigindo privilégios. & RF02, RF03 \\ \hline
+UC03 & Sanitizar requisição de IA em trânsito & A ferramenta envia a requisição; o sistema a identifica como requisição de IA, detecta dados sensíveis, redige as ocorrências e encaminha ao provedor. & RF04--RF10, RF13, RF16 \\ \hline
+UC04 & Executar em modo \textit{dry-run} & Variante do UC03 em que as ocorrências são apenas detectadas e registradas, sem alteração do corpo. & RF14 \\ \hline
+UC05 & Gerenciar padrões de detecção & O responsável por segurança ativa, desativa, cria, edita ou exclui padrões na TUI ou no arquivo de configuração. & RF11, RF12, RF19 \\ \hline
+UC06 & Configurar o proxy & O responsável define porta, modo e listas de \textit{hosts}. & RF06, RF07, RF17, RF20 \\ \hline
+UC07 & Monitorar o tráfego em tempo real & O usuário acompanha, na TUI, contadores e últimos eventos. & RF18 \\ \hline
+UC08 & Consultar a trilha de auditoria & O responsável analisa o arquivo de auditoria para verificar o que foi detectado e redigido. & RF15, RF16 \\ \hline
+UC09 & Diagnosticar o ambiente & O usuário executa o diagnóstico para verificar CA e porta. & RF21, RF22 \\ \hline
+UC10 & Distribuir e instalar o binário & O mantenedor publica versões e o usuário instala por pacote ou binário. & RF24 \\ \hline
+\end{tabular}
+\fonte{Elaborado pela equipe (2026).}
+\end{table}
+
+\section{Análise e Priorização}
+
+Dos 25 requisitos funcionais, 14 foram classificados como \textit{Deve}, 8 como \textit{Deveria} e 3 como \textit{Poderia}. Os requisitos \textit{Deve} formam o núcleo da proposta e concentram-se nos três eixos da lacuna identificada na literatura: interceptação em tempo real (RF01--RF05), identificação independente de ferramenta e de provedor (RF06--RF08) e detecção com redação seletiva (RF10--RF13). A trilha de auditoria (RF15) e o encerramento controlado (RF23) completam o conjunto indispensável, por sustentarem a avaliação do impacto operacional e a governança.
+
+A seletividade da proteção, isto é, a possibilidade de calibrar \textit{o que} é redigido, foi tratada como requisito de primeira ordem (RF11 e RF12). Essa decisão ecoa a observação de que aplicar uma transformação uniforme a todo o conteúdo comprometeria a utilidade do assistente \cite{pan2025selective}, e é refletida no critério de tolerância zero a falsos positivos (RNF03).
+
+Os requisitos de plataforma (RF18 a RF24) foram priorizados abaixo do núcleo porque não alteram a capacidade de proteção, mas determinam a adoção prática; por isso, a avaliação com usuários (Seção~\ref{sec:test_usuarios}) os contempla. O único requisito não implementado, RF25, depende da estabilização das interfaces internas de padrões e foi deliberadamente adiado.

@@ -1,0 +1,229 @@
+\chapter{Testes e Validação}\label{chp:test}
+
+Este capítulo apresenta o planejamento dos testes, os casos de teste, a execução com o registro das evidências, os problemas encontrados e o plano de validação com usuários. A verificação confronta o comportamento observado do mecanismo com os requisitos do Capítulo~\ref{chp:req}; a validação, que avalia se o mecanismo é útil e aceitável para quem o usa, é planejada na Seção~\ref{sec:test_usuarios}.
+
+\section{Planejamento dos Testes}
+\label{sec:test_plano}
+
+\subsection{Objetivos e níveis}
+
+Os testes têm três objetivos: (i) verificar os requisitos funcionais críticos (RF01 a RF17) e os requisitos não funcionais mensuráveis (RNF01 a RNF03, RNF09); (ii) obter evidências de desempenho que sustentem a avaliação de impacto operacional, que é uma das contribuições da pesquisa; e (iii) identificar defeitos antes da etapa de experimentação. Foram definidos quatro níveis:
+
+\begin{description}
+    \item[N1 -- Unitário automatizado.] Testes com o pacote de testes da linguagem sobre o analisador, o filtro, a inferência de provedor, a configuração e a interface de terminal.
+    \item[N2 -- Desempenho.] Medições de latência e de vazão do analisador, com cargas de tamanhos variados.
+    \item[N3 -- Integração e sistema.] Execução do proxy completo, com cliente e destino reais ou simulados, exercitando o \textit{pipeline} de ponta a ponta e a trilha de auditoria.
+\end{description}
+
+\subsection{Ambiente, dados e critérios}
+
+\textbf{Ambiente de verificação.} A execução registrada neste capítulo foi realizada em 14 de outubro de 2026, sobre a versão do código correspondente ao \textit{commit} faebae9, em ambiente Linux (Ubuntu 24.04, amd64), compilador Go 1.24.13 e processador Intel Xeon de 2,1~GHz. Como o módulo declara a versão 1.25 da linguagem, a verificação foi feita em uma cópia descartável com a diretiva ajustada para 1.24, e as dependências foram resolvidas a partir das versões fixadas no módulo; o código-fonte do repositório não foi modificado. A interface de terminal (N1) não pôde ser executada por exigir bibliotecas que não foram resolvidas nesse ambiente.
+
+
+\textbf{Dados de teste.} Todos os segredos usados são fictícios, com o formato dos \textit{tokens} reais e sem validade. Nenhum teste utiliza credenciais ou código de terceiros.
+
+\textbf{Critérios de aceitação.} (i) todos os testes automatizados aprovados; (ii) nenhum falso positivo nos casos benignos (RNF03); (iii) latência média do analisador inferior a 3~ms para corpos de até 1~MiB (RNF01); (iv) requisição redigida mantida íntegra (JSON válido e tamanho declarado coerente); (v) nenhum defeito de severidade alta em aberto ao final da etapa.
+
+\textbf{Riscos do plano.} A cobertura de testes automatizados do pacote central é parcial (Seção~\ref{sec:test_exec}); o comportamento com ferramentas de IA reais e com HTTPS depende de testes manuais por plataforma; e o desempenho medido em um equipamento não se generaliza para outros.
+
+\section{Casos de Teste}
+\label{sec:test_casos}
+
+\subsection{Testes automatizados existentes}
+
+A Tabela~\ref{tab:suites} agrupa os testes automatizados do repositório, associando-os aos requisitos que verificam. A coluna \textit{Testes} indica a quantidade de funções de teste de primeiro nível; os testes parametrizados executam subtestes adicionais.
+
+\begin{table}[htb]
+\centering
+\caption{Suítes de teste automatizadas}\label{tab:suites}
+\small
+\begin{tabular}{|p{1.3cm}|p{5.9cm}|p{1.6cm}|p{2.2cm}|p{2.4cm}|}
+\hline
+\textbf{ID} & \textbf{O que verifica} & \textbf{Testes} & \textbf{Requisitos} & \textbf{Nível} \\ \hline
+CT-A01 & Detecção correta de cada formato de credencial embutido (16 casos). & 1 & RF10 & N1 \\ \hline
+CT-A02 & Ausência de falsos positivos em 32 dados benignos (identificadores, \textit{hashes}, Base64, URLs, nomes de métodos, \textit{tokens} de outros serviços). & 1 & RNF03 & N1 \\ \hline
+CT-A03 & Padrões personalizados por expressão regular (senha de banco, \textit{string} de conexão, JWT, chave privada). & 1 & RF12 & N1 \\ \hline
+CT-A04 & Padrões personalizados literais (tabelas internas, nomes de projetos). & 1 & RF12 & N1 \\ \hline
+CT-A05 & Ausência de falsos positivos em 10 entradas benignas para padrões personalizados. & 1 & RF12, RNF03 & N1 \\ \hline
+CT-A06 & Latência do analisador (7 cargas $\times$ 1000 iterações), falhando se a média ultrapassar 3~ms. & 1 & RNF01 & N2 \\ \hline
+CT-A07 & Vazão do analisador. & 1 & RNF01 & N2 \\ \hline
+CT-A08 & Leitura, escrita e \textit{round-trip} da configuração YAML; padrões, porta por omissão e erro para YAML inválido ou caminho sem permissão. & 7 & RF11, RF12, RF17 & N1 \\ \hline
+CT-A09 & Casamento de curingas de \textit{host}, tipo de conteúdo e função de classificação de provedores. & 6 & RF06, RF07 & N1 \\ \hline
+CT-A10 & Reconhecimento de requisições de IA por formato de provedor, vazias ou inválidas (9 testes) e decisão de processamento por método, tipo, \textit{host} e modo (8 testes). & 17 & RF05--RF08 & N1 \\ \hline
+CT-A11 & Inferência de provedor e modelo a partir do corpo. & 7 & RF09 & N1 \\ \hline
+CT-A12 & Contadores, anel de eventos, telas e navegação da TUI. & 21 & RF18--RF20 & N1 \\ \hline
+\end{tabular}
+\fonte{Elaborado pela equipe (2026).}
+\end{table}
+
+\subsection{Casos de teste de integração e de sistema}
+
+Os casos da Tabela~\ref{tab:integracao} exercitam o proxy completo. Foram elaborados a partir do roteiro de testes manuais do repositório e automatizados em um teste de integração que inicia o proxy, um destino HTTP simulado que devolve o corpo recebido e um cliente configurado para usar o proxy. Os casos CT-M01 a CT-M07, que dependem de plataforma, de ferramenta real ou de interação humana, permanecem como testes manuais.
+
+\begin{table}[htb]
+\centering
+\caption{Casos de teste de integração e de sistema}\label{tab:integracao}
+\small
+\begin{tabular}{|p{1.35cm}|p{4.4cm}|p{5.6cm}|p{2.3cm}|}
+\hline
+\textbf{ID} & \textbf{Cenário} & \textbf{Resultado esperado} & \textbf{Requisitos} \\ \hline
+CT-I01 & Requisição de IA com chave de projeto e chave de acesso AWS fictícias no \textit{prompt}. & Destino recebe as chaves substituídas pelo rótulo; JSON válido; tamanho declarado coerente. & RF01, RF08, RF10, RF13 \\ \hline
+CT-I02 & Requisição de IA sem dado sensível. & Corpo entregue idêntico ao enviado. & RF13, RNF03 \\ \hline
+CT-I03 & JSON sem campos de requisição de IA contendo chave fictícia. & Requisição ignorada e entregue sem alteração (comportamento por projeto). & RF08 \\ \hline
+CT-I04 & Requisição \texttt{POST} com tipo de conteúdo texto simples. & Requisição ignorada e entregue sem alteração. & RF05 \\ \hline
+CT-I05 & Modo \textit{dry-run} com chave fictícia. & Corpo idêntico ao original; evento registrado como detecção. & RF14 \\ \hline
+CT-I06 & \textit{Host} presente na lista de ignorados. & Corpo idêntico ao original. & RF07 \\ \hline
+CT-I07 & Modo \textit{whitelist} com \textit{host} fora da lista de permitidos. & Corpo idêntico ao original. & RF06 \\ \hline
+CT-I08 & Destino inalcançável. & Erro explícito devolvido ao cliente, sem travamento do proxy. & RF16, RNF09 \\ \hline
+CT-I09 & Corpo de 6~MiB (acima do limite de análise). & Requisição encaminhada íntegra ou rejeitada de forma explícita. & RF05, RNF02 \\ \hline
+CT-I10 & 100 requisições concorrentes com chave fictícia. & Todas atendidas e uma entrada de auditoria por requisição; trilha sem segredos. & RNF09, RNF10, RF15 \\ \hline
+CT-M01 & Instalação da CA em macOS, Linux e Windows. & CA confiável pelo sistema; diagnóstico indica ``instalado''. & RF02, RF03 \\ \hline
+CT-M02 & Ferramenta de IA real configurada para o proxy, com HTTPS. & Funcionamento normal da ferramenta e redação observada na auditoria. & RF04, RNF11 \\ \hline
+CT-M03 & Uso da TUI: painel, criação e exclusão de padrão, edição do proxy. & Telas navegáveis; alterações gravadas no arquivo. & RF18--RF20 \\ \hline
+CT-M04 & Execução de \texttt{doctor}, \texttt{version} e \texttt{help}. & Saídas conforme o esperado. & RF21, RF22 \\ \hline
+CT-M05 & Encerramento por sinal durante tráfego. & Registro de auditoria persistido sem corrupção. & RF23 \\ \hline
+CT-M06 & Conexão mantida aberta além do limite de tempo. & Conexão encerrada de forma controlada. & RNF09 \\ \hline
+CT-M07 & Instalação por Homebrew e por binário, com verificação de \textit{checksum}. & Binário executável; \textit{checksum} confere. & RF24, RNF07 \\ \hline
+\end{tabular}
+\fonte{Elaborado pela equipe (2026), a partir do roteiro de testes do repositório.}
+\end{table}
+
+\section{Execução e Registro de Evidências}
+\label{sec:test_exec}
+
+\subsection{Procedimento}
+
+Os comandos executados são apresentados no Listagem~\ref{lst:cmds}. A opção de detecção de corridas de dados foi incluída por ser adequada a um sistema com várias \textit{goroutines} (servidor, \textit{workers} de auditoria e interface).
+
+\begin{lstlisting}[basicstyle=\ttfamily\scriptsize, frame=single, caption={Comandos de execução dos testes}, label={lst:cmds}, captionpos=t, breaklines=true]
+go test -v -count=1 ./...                         # suites automatizadas
+go test -count=1 -cover ./internal/guardian/      # cobertura do pacote central
+go test -race -count=1 ./...                      # deteccao de corridas de dados
+go test -run xxx -bench . -benchmem ./internal/guardian/   # benchmarks
+\end{lstlisting}
+
+\subsection{Resultados dos testes automatizados}
+
+O pacote central (analisador, filtro, provedor, configuração e auditoria) executou 44 testes de primeiro nível e 52 subtestes, todos aprovados, com cobertura de 31,8\% das instruções; o detector de corridas, aplicado à suíte existente, não reportou ocorrências. A análise estática do pacote (\texttt{go vet}) não emitiu avisos. Os casos CT-A02 e CT-A05 resultaram em 0 falso positivo em 32 e em 10 entradas, respectivamente. A baixa cobertura decorre de o manipulador de requisições do proxy, a auditoria e os pacotes de CA e de diagnóstico não possuírem testes automatizados; esse é o principal vazio do plano (Tabela~\ref{tab:rastreio}).
+
+\subsection{Resultados dos testes de integração}
+
+A Tabela~\ref{tab:res_int} apresenta os resultados dos casos CT-I01 a CT-I10, obtidos com o proxy completo e um destino simulado.
+
+\begin{table}[htb]
+\centering
+\caption{Resultados dos casos de integração (14/10/2026)}\label{tab:res_int}
+\small
+\begin{tabular}{|p{1.35cm}|p{9.6cm}|p{2.5cm}|}
+\hline
+\textbf{ID} & \textbf{Observação} & \textbf{Resultado} \\ \hline
+CT-I01 & Ambas as chaves foram substituídas pelo rótulo; o JSON permaneceu válido e o tamanho declarado coincidiu com o corpo entregue. & Aprovado \\ \hline
+CT-I02 & Corpo entregue idêntico. & Aprovado \\ \hline
+CT-I03 & Corpo entregue sem alteração; a chave fictícia \textbf{não} foi redigida por o JSON não conter campos de IA. & Conforme o projeto; limitação \\ \hline
+CT-I04 & Corpo entregue sem alteração. & Aprovado \\ \hline
+CT-I05 & Corpo idêntico ao original; evento registrado com as detecções. & Aprovado \\ \hline
+CT-I06 & Corpo idêntico. & Aprovado \\ \hline
+CT-I07 & Corpo idêntico. & Aprovado \\ \hline
+CT-I08 & O cliente recebeu resposta de erro (status 500), e o proxy continuou operante. & Aprovado, com ressalva \\ \hline
+CT-I09 & Foram enviados 6.291.516 bytes e o destino recebeu 5.242.880 (exatamente 5~MiB), com JSON inválido: a requisição é truncada (P02). & \textbf{Reprovado} \\ \hline
+CT-I10 & 99 das 100 requisições concorrentes foram atendidas; a trilha registrou 108 das 109 entradas esperadas no cenário completo; nenhuma entrada contém segredo. A causa da falha isolada não foi investigada. Com o detector de corridas, o teste de integração acusou corridas de dados. & \textbf{Reprovado} \\ \hline
+\end{tabular}
+\fonte{Elaborado pela equipe (2026).}
+\end{table}
+
+\subsection{Resultados de desempenho}
+
+O teste de latência do repositório, executado no ambiente de verificação, resultou em média de 0,95~\textmu s, P95 de 1,92~\textmu s e P99 de 5,06~\textmu s, valores da mesma ordem dos registrados na documentação do projeto (média de 1,07~\textmu s), obtidos em outro equipamento. No entanto, esse teste usa sete cargas de menos de cem bytes, muito menores que as requisições reais de assistentes de código, que carregam contexto de arquivos. Por isso foram realizadas medições complementares com corpos de 1~KB a 5~MiB, contendo código-fonte comum e os nove padrões embutidos ativos (Tabela~\ref{tab:desempenho}). Cada valor é a mediana de três execuções de \textit{benchmark}.
+
+\begin{table}[htb]
+\centering
+\caption{Latência do analisador por tamanho de corpo (ambiente de verificação)}\label{tab:desempenho}
+\small
+\begin{tabular}{|p{4.6cm}|p{2.9cm}|p{2.7cm}|p{2.7cm}|}
+\hline
+\textbf{Carga} & \textbf{Tempo por operação} & \textbf{Vazão} & \textbf{Memória por operação} \\ \hline
+1~KB & 2,4~\textmu s & 472 MB/s & 1,1~KB \\ \hline
+10~KB & 22,7~\textmu s & 451 MB/s & 10,6~KB \\ \hline
+100~KB & 0,22~ms & 474 MB/s & 104~KB \\ \hline
+1~MiB & 2,44~ms & 429 MB/s & 1,0~MiB \\ \hline
+5~MiB (limite de análise) & 13,5~ms & 388 MB/s & 5,0~MiB \\ \hline
+100~KB, com duas credenciais a redigir & 0,28~ms & 371 MB/s & 314~KB (19 alocações) \\ \hline
+\end{tabular}
+\fonte{Elaborado pela equipe (2026).}
+\end{table}
+
+A análise cresce de forma aproximadamente linear com o tamanho do corpo, a cerca de 2,4~ms por MiB. Para corpos de até 1~MiB, o critério de RNF01 (média inferior a 3~ms) é atendido; no limite de 5~MiB, a análise leva cerca de 13,5~ms, valor ainda pequeno diante do tempo de resposta de um LLM, que costuma ser de segundos, mas acima do limiar do teste automatizado. A vazão de aproximadamente 400 a 500~MB/s indica que o analisador não é o gargalo do \textit{pipeline}. Duas ressalvas metodológicas sobre as medições do repositório são tratadas como problema P09.
+
+\subsection{Evidências adicionais documentadas no repositório}
+
+O repositório documenta, com capturas de tela, resultados de execução em um equipamento com processador Intel Core i5-13400 (Linux): detecção de todos os formatos de credencial, ausência de falsos positivos nos casos benignos, e resultados dos padrões personalizados (cinco de cinco para senha de banco, \textit{string} de conexão e chave privada; um de um para JWT; cinco de cinco para os literais de tabelas e de projetos).
+
+
+\subsection{Modelo de registro de evidências}
+
+Para as execuções futuras, cada rodada é registrada com os campos da Tabela~\ref{tab:modelo_ev}. As execuções de 14/10/2026 correspondem à primeira linha.
+
+\begin{table}[htb]
+\centering
+\caption{Modelo de registro de execução de testes}\label{tab:modelo_ev}
+\small
+\begin{tabular}{|p{1.9cm}|p{2.1cm}|p{3.2cm}|p{2.6cm}|p{3.7cm}|}
+\hline
+\textbf{Data} & \textbf{Versão} & \textbf{Ambiente} & \textbf{Casos} & \textbf{Resultado e evidência} \\ \hline
+14/10/2026 & faebae9 & Linux amd64, Go 1.24.13, Xeon 2,1 GHz & CT-A01 a A11; CT-I01 a I10; \textit{benchmarks} & 44 testes aprovados; 2 casos de integração reprovados; saída de teste arquivada \\ \hline
+\end{tabular}
+\fonte{Elaborado pelo autor (2026).}
+\end{table}
+
+\section{Problemas Identificados e Correções}
+\label{sec:test_problemas}
+
+A verificação e a revisão do código e da documentação identificaram os problemas da Tabela~\ref{tab:problemas}. A coluna \textit{Origem} distingue o que foi \textbf{confirmado por execução} do que foi identificado por \textbf{leitura do código}. A severidade é uma avaliação do autor, baseada no impacto sobre os requisitos. Todos permanecem em aberto na data desta entrega; as correções são o objeto do próximo incremento e cada uma deve gerar ao menos um caso de teste de regressão.
+
+{\small
+\begin{longtable}{|p{0.95cm}|p{5.0cm}|p{1.5cm}|p{1.7cm}|p{3.1cm}|p{1.2cm}|}
+\caption{Problemas identificados}\label{tab:problemas}\\
+\hline
+\textbf{ID} & \textbf{Descrição} & \textbf{Origem} & \textbf{Severidade} & \textbf{Correção proposta} & \textbf{Req.} \\ \hline
+\endfirsthead
+\hline
+\textbf{ID} & \textbf{Descrição} & \textbf{Origem} & \textbf{Severidade} & \textbf{Correção proposta} & \textbf{Req.} \\ \hline
+\endhead
+P01 & Condição de corrida no registrador de auditoria: cada gravação dispara outra \textit{goroutine} que lê e escreve a lista de entradas e o arquivo sem exclusão mútua, comprometendo a integridade da trilha. & Execução (detector de corridas) & Alta & Gravar sob a mesma exclusão mútua, ou usar escritor único com canal. Teste concorrente com \texttt{-race}. & RF15, RNF09 \\ \hline
+P02 & Corpos acima de 5~MiB são lidos até o limite e a requisição é encaminhada truncada, produzindo requisição inválida. & Execução (CT-I09) & Alta & Encaminhar o corpo integral sem análise, ou rejeitar explicitamente. Teste de limite. & RF05, RNF02 \\ \hline
+P03 & Durações são armazenadas em milissegundos inteiros; análises que levam microssegundos são registradas como zero, impedindo medir o custo a partir da trilha. & Execução (trilha) & Média & Registrar em microssegundos. & RNF01, RF15 \\ \hline
+P07 & O diagnóstico considera uma variável de ambiente de porta que o proxy não utiliza (a porta vem do YAML), podendo reportar porta diferente da efetiva. & Leitura de código & Baixa & Unificar a fonte da porta. & RF21 \\ \hline
+P08 & Edições feitas na TUI são gravadas no YAML, mas não são aplicadas ao proxy em execução. & Leitura de código & Baixa & Recarga da configuração ou aviso explícito de reinício. & RF19, RF20 \\ \hline
+\end{longtable}
+}
+\noindent\fonte{Elaborado pela equipe (2026).}
+
+\section{Rastreabilidade entre Requisitos e Testes}
+
+A Tabela~\ref{tab:rastreio} relaciona cada requisito funcional aos casos que o verificam. Requisitos sem cobertura automatizada concentram-se nos componentes de CA, auditoria, diagnóstico, encerramento e distribuição, e serão tratados por novos casos no próximo incremento.
+
+\begin{table}[htb]
+\centering
+\caption{Matriz de rastreabilidade requisitos--testes}\label{tab:rastreio}
+\small
+\begin{tabular}{|p{1.5cm}|p{4.7cm}|p{1.5cm}|p{4.7cm}|}
+\hline
+\textbf{Req.} & \textbf{Casos} & \textbf{Req.} & \textbf{Casos} \\ \hline
+RF01 & CT-I01 a I10 & RF14 & CT-I05 \\ \hline
+RF02, RF03 & CT-M01 (não executado) & RF15 & CT-I10 (inspeção da trilha) \\ \hline
+RF04 & CT-M02 (não executado) & RF16 & CT-I08 \\ \hline
+RF05 & CT-A10, CT-I04, CT-I09 & RF17 & CT-A08 \\ \hline
+RF06 & CT-A10, CT-I07 & RF18--RF20 & CT-A12 (não executado), CT-M03 \\ \hline
+RF07 & CT-A09, CT-A10, CT-I06 & RF21, RF22 & CT-M04 (não executado) \\ \hline
+RF08 & CT-A10, CT-I03 & RF23 & CT-M05 (não executado) \\ \hline
+RF09 & CT-A11 & RF24 & CT-M07 (não executado) \\ \hline
+RF10 & CT-A01, CT-A02 & RF25 & --- \\ \hline
+RF11, RF12 & CT-A03 a A05, CT-A08 & RNF01 & CT-A06, CT-A07, \textit{benchmarks} \\ \hline
+RF13 & CT-I01, CT-I02 & RNF03 & CT-A02, CT-A05, CT-I02 \\ \hline
+\end{tabular}
+\fonte{Elaborado pela equipe (2026).}
+\end{table}
+
+\section{Síntese}
+
+A verificação confirmou o funcionamento do núcleo de detecção e redação: os formatos de credencial suportados são detectados, não houve falsos positivos nos casos de teste, e a requisição redigida permanece válida. O custo de análise é baixo (da ordem de 2,4~ms por MiB) e não representa gargalo frente ao tempo de resposta de um LLM. Por outro lado, a execução revelou dois defeitos de severidade alta (P01 e P02) e limitações de medição (P03, P04 e P09) que afetam diretamente a avaliação de impacto operacional da pesquisa. Esses pontos definem o escopo do próximo incremento antes da etapa de experimentação.

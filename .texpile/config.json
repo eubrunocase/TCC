@@ -1,0 +1,7 @@
+{
+	"v": 1,
+	"main": "Main.tex",
+	"latex": {
+		"command": "latexmk -cd -xelatex -interaction=nonstopmode -file-line-error -synctex=1 -output-directory=output {main}"
+	}
+}

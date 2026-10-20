@@ -1,0 +1,77 @@
+\chapter{Metodologia}\label{chp:met}
+Esta seção descreve os ḿetodos de pesquisa utilizado como base para realização do estudo. 
+
+\section{Visão da Pesquisa}
+
+A pesquisa exposta teve como objetivo promover um estudo .....
+
+\section{Processo de Pesquisa}
+
+\subsection{Estratégias e Strings de Busca}
+\label{sec:strings_busca}
+
+Para a condução da revisão sistemática e identificação dos trabalhos relacionados, foram estruturadas cinco strings de busca (A, B, C, D e E). Cada consulta foi desenhada com um objetivo específico e vinculada às Questões de Pesquisa (RQs) estabelecidas para este trabalho.
+
+\vspace{0.3cm}
+\noindent\textbf{String A: Riscos em assistentes de programação} \\
+\textbf{Objetivo:} Identificar riscos de exposição de dados, código proprietário, informações confidenciais e problemas de privacidade no uso de assistentes de programação. \\
+\begin{verbatim}
+("large language model" OR LLM OR "generative AI")
+AND
+("code assistant" OR "coding assistant" OR "AI coding assistant"
+OR "AI-assisted programming" OR "AI-assisted development")
+AND
+("data leakage" OR "code leakage" OR "privacy leakage")
+\end{verbatim}
+
+\vspace{0.3cm}
+\noindent\textbf{String B: Sanitização e redação} \\
+\textbf{Objetivo:} Identificar técnicas utilizadas para remover, substituir, anonimizar ou bloquear informações sensíveis antes do envio ao modelo. \\
+\begin{verbatim}
+("large language model" OR LLM OR "generative AI")
+AND
+("prompt sanitization" OR "data redaction" OR "input filtering"
+OR "data sanitization" OR anonymization OR pseudonymization
+OR "privacy-preserving")
+AND
+("sensitive data" OR privacy OR security)
+\end{verbatim}
+
+\vspace{0.3cm}
+\noindent\textbf{String C: Arquitetura intermediária e prevenção} \\
+\textbf{Objetivo:} Identificar arquiteturas e mecanismos relacionados. \\
+\begin{verbatim}
+("reverse proxy" OR "security proxy" OR "API gateway"
+OR middleware OR "policy enforcement point")
+AND
+("data loss prevention" OR "data leakage prevention"
+OR "content inspection" OR "data redaction")
+AND
+("sensitive data" OR "confidential information"
+OR "personal data")
+\end{verbatim}
+
+\vspace{0.3cm}
+\noindent\textbf{String D: Detecção de informações sensíveis} \\
+\textbf{Objetivo:} Identificar métodos de reconhecimento de credenciais, segredos, dados pessoais e outras informações sensíveis em código ou ambientes de desenvolvimento. \\
+\begin{verbatim}
+("sensitive data detection" OR "sensitive information detection"
+OR "secret detection" OR "credential detection"
+OR "PII detection" OR "API key detection")
+AND
+("source code" OR prompt OR IDE
+OR "software development" OR "software repository")
+\end{verbatim}
+
+\vspace{0.3cm}
+\noindent\textbf{String E: Impacto operacional} \\
+\textbf{Objetivo:} Encontrar métricas e evidências sobre impacto na experiência, produtividade, latência e utilidade dos assistentes. \\
+\begin{verbatim}
+("large language model" OR LLM)
+AND
+("code assistant" OR "AI-assisted programming")
+AND
+(privacy OR security)
+AND
+(usability OR latency OR utility OR productivity)
+\end{verbatim}

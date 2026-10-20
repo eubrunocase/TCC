@@ -1,0 +1,439 @@
+\NeedsTeXFormat{LaTeX2e} 
+\ProvidesPackage{style/ucsal}[2018/08/20]
+
+% Formatação da página e aspectos gerais
+\RequirePackage[a4paper,top=3cm,left=3cm,right=2cm,bottom=2cm]{geometry}
+
+% verificar se o documento será em português ou ingles
+%\newif\ifmypackage@portuguese
+\DeclareOption{portuguese}{
+	\def\isportuguese
+}
+\DeclareOption{english}{
+	\def\isenglish
+}
+\ProcessOptions\relax
+
+% use isso quando quiser definir qualquer coisa dependente de linguagem!!!
+%\ifx\isenglish\undefined
+%portuguese
+%\else
+%english
+%\fi
+
+% tabelas
+\RequirePackage{longtable}
+\RequirePackage{booktabs} % melhora o desenho das tabelas com \toprule \midrule e \bottomrule
+
+% index
+\RequirePackage{makeidx}  % índice
+\makeindex
+
+% referências
+\usepackage{prettyref} % facilita a construção de referências, deve-se usar \prettyref{...} no lugar de \ref{...}
+
+\ifx\isenglish\undefined
+\newrefformat{fig}{Figura~\ref{#1}}
+\newrefformat{tab}{Tabela~\ref{#1}}
+\newrefformat{sec}{Seção~\ref{#1}}
+\newrefformat{eq} {Equação~(\ref{#1})}
+\newrefformat{chp}{Capítulo~\ref{#1}}
+\newrefformat{ex} {Exemplo~\ref{#1}}
+\newrefformat{anx}{Anexo~\ref{#1}}
+\newrefformat{apd}{Apêndice~\ref{#1}}
+\newrefformat{eta}{Etapa~\ref{#1}}
+\newrefformat{quadro}{Quadro~\ref{#1}}
+\else
+\newrefformat{fig}{Figure~\ref{#1}}
+\newrefformat{tab}{Table~\ref{#1}}
+\newrefformat{sec}{Section~\ref{#1}}
+\newrefformat{eq} {Equation~(\ref{#1})}
+\newrefformat{chp}{Chapter~\ref{#1}}
+\newrefformat{ex} {Example~\ref{#1}}
+\newrefformat{anx}{Anexo~\ref{#1}}
+\newrefformat{apd}{Apendix~\ref{#1}}
+\newrefformat{eta}{Etapa~\ref{#1}}
+\newrefformat{quadro}{Frame~\ref{#1}}
+\fi
+
+\usepackage{caption}
+
+\ifx\isenglish\undefined
+\captionsetup[figure]{name={Figura}}
+\captionsetup[table]{name={Tabela}}
+\else
+\captionsetup[figure]{name={Figure}}
+\captionsetup[table]{name={Table}}
+\fi
+
+% acronimos
+\usepackage{acronym}  % uso de siglas
+
+% Formatação de paragrafos
+\renewcommand{\ABNTEXchapterfont}{\bfseries}
+
+% Parametros de Macros
+% --------
+\newcommand{\deelcurso}{}
+\newcommand{\cursoa}[1]{\renewcommand{\deelcurso}{#1}}
+\newcommand{\curso}[1]{\cursoa{#1}}
+
+\newcommand{\DEELautor}[3]{\autor{{#1 #2}}}
+      
+\newcommand{\deelchave}{}
+\newcommand{\chave}[1]{\renewcommand{\deelchave}{#1}}
+\newcommand{\palavraschave}[1]{\chave{#1}}
+
+\newcommand{\deelkey}{}
+\newcommand{\key}[1]{\renewcommand{\deelkey}{#1}}
+\newcommand{\keywords}[1]{\key{#1}}
+ 
+\newcommand{\deeljuryb}{}
+\newcommand{\juryb}[1]{\renewcommand{\deeljuryb}{#1}}
+\newcommand{\membrob}[1]{\juryb{#1}}
+
+\newcommand{\deeljuryc}{}
+\newcommand{\juryc}[1]{\renewcommand{\deeljuryc}{#1}}
+\newcommand{\membroc}[1]{\juryc{#1}}
+%------------------------------------------------------------
+
+\preambulo{
+    \ifx\isenglish\undefined
+        Trabalho de Conclusão de Curso apresentado à Universidade Católica do Salvador como parte dos requisitos necessários para a obtenção do Título de Engenheiro de Software. \newline {\imprimirorientadorRotulo~\imprimirorientador\par} 
+    \else
+        Final paper submitted in partial fulfillment of the requirements
+for the degree of BEng. in Automation and Control Engineering of the Universidade Federal de Santa Catarina. \newline {Advisor: ~\imprimirorientador\par} 
+    \fi
+
+    }
+
+
+%%--------- Parametros da DEDICATÓRIA ----------
+\newcommand{\deelDEELdedicatoria}{}
+\newcommand{\dedica}[1]{\renewcommand{\deelDEELdedicatoria}{#1}}
+\newcommand{\DEELdedicatoria}[1]{\dedica{#1}}
+
+%%--------- Parametros dos AGRADECIMENTOS ----------
+\newcommand{\deelDEELagradecimentos}{}
+\newcommand{\agradece}[1]{\renewcommand{\deelDEELagradecimentos}{#1}}
+\newcommand{\DEELagradecimentos}[1]{\agradece{#1}}
+
+%%--------- Parametros da EPIGRAFE ----------
+\newcommand{\deelDEELepigrafe}{}
+\newcommand{\epigrafeb}[1]{\renewcommand{\deelDEELepigrafe}{#1}}
+\newcommand{\DEELepigrafe}[1]{\epigrafeb{#1}}
+
+%--------- Parametros do RESUMO ----------
+\newcommand{\deelDEELresumo}{}
+\newcommand{\resum}[1]{\renewcommand{\deelDEELresumo}{#1}}
+\newcommand{\DEELresumo}[1]{\resum{#1}}
+
+%--------- Parametros do ABSTRACT ----------
+\newcommand{\deeltitulouk}{}
+\newcommand{\titulouk}[1]{\renewcommand{\deeltitulouk}{#1}}
+\newcommand{\tituloingles}[1]{\titulouk{#1}}
+
+\newcommand{\deelDEELabstract}{}
+\newcommand{\abstrac}[1]{\renewcommand{\deelDEELabstract}{#1}}
+\newcommand{\DEELabstract}[1]{\abstrac{#1}}
+
+
+\renewcommand{\imprimircapa}{%
+  \begin{capa}%
+
+   
+
+    \begin{figure}[!ht]
+        \centering
+        \includegraphics[width=.6\linewidth]{figuras/ucsal_logo.png}
+        
+        \ABNTEXchapterfont\large { Universidade Católica do Salvador\\
+    Bacharelado em Engenharia de Software
+    }
+    \end{figure}
+
+    \vspace{0.5cm}
+    \center
+
+    {\ABNTEXchapterfont\large\imprimirautor}
+     \vspace*{3.5cm}
+    
+    \ifx\isenglish\undefined
+        \ABNTEXchapterfont\large\imprimirtitulo
+    \else
+        \ABNTEXchapterfont\large\deeltitulouk
+    \fi
+    
+    
+    \vfill
+
+
+    {\large\imprimirlocal}
+    \par
+    {\large\imprimirdata}
+    \vspace*{1cm}
+  \end{capa}
+}
+
+
+\makeatletter
+\renewcommand{\folhaderostocontent}{
+\begin{center}
+    \textbf{\large\imprimirautor}
+
+    \vspace{7cm}
+    
+    \ifx\isenglish\undefined
+        \textbf{\Large\imprimirtitulo}
+    \else
+        \textbf{\Large\deeltitulouk}
+    \fi
+
+    
+\vspace{2cm}
+    
+    \abntex@ifnotempty{\imprimirpreambulo}{%
+      \hspace{.20\textwidth}
+      \begin{minipage}{.75\textwidth}
+       \SingleSpacing
+         \imprimirpreambulo
+       \end{minipage}%
+       \vspace*{\fill}
+    }%
+    
+
+    
+    {Universidade Católica do Salvador\\
+       
+    }
+    
+    \vspace*{\fill}
+    
+
+
+    {\large\imprimirlocal}
+    \par
+    {\large\imprimirdata}
+    \vspace*{1cm}
+\end{center}
+
+\let\cleardoublepage\clearpage
+}
+\makeatother
+
+%%-----------Formatação da Ficha catalográfica da UEL ----------
+%%
+\newcommand{\DEELfichacatalografica}{
+\vspace*{\stretch{1}}% Posição vertical
+\begin{center}
+\textbf{Ficha Catalográfica}
+\end{center}
+\vspace{0.25cm}
+\begin{center}
+	\begin{tabular}{| @{\hspace{.5cm}} p{\textwidth-2cm} @{\hspace{.5cm}}|}
+\hline
+\noindent \imprimirautor \\
+\imprimirtitulo \, - \imprimirlocal, \imprimirdata \, - \pageref{LastPage} p., 30 cm.\\
+\imprimirorientadorRotulo \, \imprimirorientador \\
+\deelchave \\
+\noindent I. Universidade Católica do Salvador. \deelcurso. II. \imprimirtitulo.\\
+\hline
+\end{tabular}
+\end{center}
+\cleardoublepage
+}
+
+
+%-----------Formatação da FOLHA DE APROVAÇÃO ----------
+%
+\newcommand{\folhaaprovacao}{
+\newpage
+\begin{center}
+{\large \textbf{\imprimirautor}}
+\end{center}
+
+\vspace*{0.75cm}
+
+\begin{center}
+    \ifx\isenglish\undefined
+        \LARGE\ABNTEXchapterfont\imprimirtitulo\par
+    \else
+        \LARGE\ABNTEXchapterfont\deeltitulouk\par
+    \fi
+\end{center}
+
+\vspace*{1cm}
+
+
+\begin{center}
+\begin{minipage}{11cm}
+    \ifx\isenglish\undefined
+            {Trabalho de Conclusão de Curso apresentado à Universidade Católica do Salvador como requisito parcial para a obtenção do título de Engenheiro de Software.}
+        \else
+            {Final paper submitted in partial fulfillment of the requirements
+for the degree of BEng. in Automation and Control Engineering of the Universidade Federal de Santa Catarina.}
+        \fi
+\end{minipage}
+\end{center}
+
+\vspace*{-0.5cm}
+
+\setlength{\ABNTEXsignthickness}{0.4pt}
+\setlength{\ABNTEXsignskip}{1.5cm}
+
+\vspace*{2.5cm}
+Salvador, \today
+
+ \ifx\isenglish\undefined
+            \textbf{Banca Examinadora:}
+        \else
+            \textbf{Examination Committee}
+        \fi
+
+\assinatura*{\imprimirorientador \\ Universidade Católica do Salvador \\ Orientador}\\
+\hspace*{0.75cm}
+\assinatura*{\deeljuryb \\ Universidade Católica do Salvador}\\
+\hspace*{0.75cm}
+\assinatura*{\deeljuryc \\ Universidade Católica do Salvador}
+
+
+}
+
+%-----------Formatação da Dedicatória ----------
+\newcommand{\textodedicatoria}{
+\newpage
+\if\DEELdedicatoria\@empty
+\else
+  \newpage
+  \vspace*{\stretch{1}}
+  \begin{flushright}
+  \deelDEELdedicatoria
+  \end{flushright}
+\fi
+}
+
+
+%-----------Formatação dos Agradecimentos ----------
+\newcommand{\textoagradecimentos}{
+\newpage
+\if\DEELagradecimentos\@empty
+\else
+    \ifx\isenglish\undefined
+        \pretextualchapter{Agradecimentos}
+    \else
+        \pretextualchapter{Acknowledgements}
+    \fi
+  
+  \deelDEELagradecimentos
+  %\cleardoublepage
+\fi
+}
+
+
+%-----------Formatação da Epígrafe ----------
+\newcommand{\textoepigrafe}{
+\newpage
+\if\DEELepigrafe\@empty
+\else
+  \newpage
+  \vspace*{\stretch{1}}
+  \begin{flushright}
+  \deelDEELepigrafe
+  \end{flushright}
+  %\cleardoublepage
+\fi
+}
+
+
+%-----------Formatação do Resumo ----------
+\newcommand{\textoresumo}{
+    \newpage
+    \vspace{1.25cm}
+    \pretextualchapter{Resumo}
+    \deelDEELresumo\\
+    
+    
+   
+    {\textbf{Palavras-Chave:}} \deelchave
+}
+
+
+%-----------Formatação do Abstract ----------
+\newcommand{\textoabstract}{
+    \newpage
+    \vspace{1.25cm}
+    \pretextualchapter{Abstract}
+    \foreignlanguage{english}{\deelDEELabstract}\\
+    
+    {\textbf{Keywords:}} \deelkey
+}
+
+
+%-----------Formatação dos Elementos Pré-Textuais (na ordem) ----------
+
+\newcommand{\ElementosPreTextuais}{
+\imprimircapa                   % Obrigatório
+\newpage{\null\newpage}
+\imprimirfolhaderosto           % Obrigatório
+\newpage{\null\newpage}
+%\DEELfichacatalografica     % Obrigatório
+
+\folhaaprovacao         % Obrigatório
+\newpage{\null\newpage}
+\textodedicatoria       % Opcional
+\textoagradecimentos    % Opcional
+\textoepigrafe          % Opcional
+\textoresumo            % Obrigatório
+\textoabstract          % Obrigatório
+}
+
+%% outros elementos (sumário, lista de figuras, quadros e tabelas e bibliografia)
+
+% sumário
+\newcommand{\Sumario}{
+%\cleardoublepage
+\newpage
+\ifx\isenglish\undefined
+\renewcommand{\contentsname}{Sumário}
+\else
+\renewcommand{\contentsname}{Table of contents}
+\fi
+\tableofcontents*
+\thispagestyle{empty}
+}
+
+\newcommand{\ListaDeFiguras}{
+\newpage
+\ifx\isenglish\undefined
+\renewcommand{\listfigurename}{Lista de figuras}
+\renewcommand{\figurename}{Figura}
+\else
+\renewcommand{\listfigurename}{List of figures}
+\fi
+\listoffigures*
+%\cleardoublepage
+}
+
+\newcommand{\ListaDeTabelas}{
+\newpage
+\ifx\isenglish\undefined
+\renewcommand{\listtablename}{Lista de tabelas}
+\else
+\renewcommand{\listtablename}{List of tables}
+\fi
+\listoftables*
+%\cleardoublepage
+}
+
+% bibliografia
+\newcommand{\Bibliografia}[1]{
+\ifx\isenglish\undefined
+\renewcommand{\bibname}{\textbf{Referências}}
+\else
+\renewcommand{\bibname}{\textbf{References}}
+\fi
+\postextual
+\bibliography{#1}
+}
+
+\endinput

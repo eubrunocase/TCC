@@ -1,0 +1,99 @@
+\changetocdepth {4}
+\babel@toc {brazil}{}\relax 
+\babel@toc {brazil}{}\relax 
+\setlength {\cftchapterindent }{\cftlastnumwidth } \setlength {\cftchapternumwidth }{2em}
+\setlength {\cftchapterindent }{\cftlastnumwidth } \setlength {\cftchapternumwidth }{2em}
+\setlength {\cftchapterindent }{\cftlastnumwidth } \setlength {\cftchapternumwidth }{2em}
+\setlength {\cftchapterindent }{\cftlastnumwidth } \setlength {\cftchapternumwidth }{2em}
+\setlength {\cftchapterindent }{\cftlastnumwidth } \setlength {\cftchapternumwidth }{2em}
+\setlength {\cftchapterindent }{\cftlastnumwidth } \setlength {\cftchapternumwidth }{2em}
+\setlength {\cftchapterindent }{0em} \setlength {\cftchapternumwidth }{\cftlastnumwidth }
+\contentsline {chapter}{\chapternumberline {1}\MakeTextUppercase []{Introdução}}{17}{chapter.1}%
+\setlength {\cftchapterindent }{0em} \setlength {\cftchapternumwidth }{\cftlastnumwidth }
+\contentsline {chapter}{\chapternumberline {2}\MakeTextUppercase []{Fundamentação Teórica}}{18}{chapter.2}%
+\contentsline {section}{\numberline {2.1}Segurança e Vazamento de Dados no Desenvolvimento Assistido por IA}{18}{section.2.1}%
+\contentsline {section}{\numberline {2.2}Modelos de Linguagem de Grande Escala (LLMs) e Riscos de Privacidade}{19}{section.2.2}%
+\contentsline {section}{\numberline {2.3}Assistentes de Desenvolvimento (Code Assistants)}{19}{section.2.3}%
+\contentsline {section}{\numberline {2.4}Detecção de Dados Sensíveis}{20}{section.2.4}%
+\contentsline {section}{\numberline {2.5}Mitigação: Sanitização e Redação de Dados}{20}{section.2.5}%
+\contentsline {section}{\numberline {2.6}Arquiteturas Intermediárias de Proteção}{21}{section.2.6}%
+\contentsline {section}{\numberline {2.7}Avaliação de Impacto Operacional}{21}{section.2.7}%
+\contentsline {section}{\numberline {2.8}Governança de Dados e IA}{22}{section.2.8}%
+\contentsline {section}{\numberline {2.9}Trabalhos Relacionados}{22}{section.2.9}%
+\contentsline {subsection}{\numberline {2.9.1}Detecção de Dados Sensíveis}{22}{subsection.2.9.1}%
+\contentsline {subsection}{\numberline {2.9.2}Preservação de Privacidade em Modelos de Linguagem}{23}{subsection.2.9.2}%
+\contentsline {subsection}{\numberline {2.9.3}Arquiteturas Alternativas de Redução de Exposição}{24}{subsection.2.9.3}%
+\contentsline {subsection}{\numberline {2.9.4}Síntese e Posicionamento do Trabalho}{24}{subsection.2.9.4}%
+\setlength {\cftchapterindent }{0em} \setlength {\cftchapternumwidth }{\cftlastnumwidth }
+\contentsline {chapter}{\chapternumberline {3}\MakeTextUppercase []{Metodologia}}{25}{chapter.3}%
+\contentsline {section}{\numberline {3.1}Visão da Pesquisa}{25}{section.3.1}%
+\contentsline {section}{\numberline {3.2}Processo de Pesquisa}{25}{section.3.2}%
+\contentsline {subsection}{\numberline {3.2.1}Estratégias e Strings de Busca}{25}{subsection.3.2.1}%
+\setlength {\cftchapterindent }{0em} \setlength {\cftchapternumwidth }{\cftlastnumwidth }
+\contentsline {chapter}{\chapternumberline {4}\MakeTextUppercase []{Levantamento e Análise de Requisitos}}{27}{chapter.4}%
+\contentsline {section}{\numberline {4.1}Abordagem de Levantamento}{27}{section.4.1}%
+\contentsline {section}{\numberline {4.2}Identificação dos Usuários}{28}{section.4.2}%
+\contentsline {subsection}{\numberline {4.2.1}Cenário de uso de referência}{28}{subsection.4.2.1}%
+\contentsline {section}{\numberline {4.3}Requisitos Funcionais}{29}{section.4.3}%
+\contentsline {section}{\numberline {4.4}Requisitos Não Funcionais}{31}{section.4.4}%
+\contentsline {section}{\numberline {4.5}Restrições, Premissas e Limitações Conhecidas}{33}{section.4.5}%
+\contentsline {section}{\numberline {4.6}Casos de Uso}{34}{section.4.6}%
+\contentsline {section}{\numberline {4.7}Análise e Priorização}{34}{section.4.7}%
+\setlength {\cftchapterindent }{0em} \setlength {\cftchapternumwidth }{\cftlastnumwidth }
+\contentsline {chapter}{\chapternumberline {5}\MakeTextUppercase []{Projeto da Solução}}{36}{chapter.5}%
+\contentsline {section}{\numberline {5.1}Princípios de Projeto}{36}{section.5.1}%
+\contentsline {section}{\numberline {5.2}Arquitetura}{36}{section.5.2}%
+\contentsline {subsection}{\numberline {5.2.1}Visão geral}{36}{subsection.5.2.1}%
+\contentsline {subsection}{\numberline {5.2.2}Estilo arquitetural}{37}{subsection.5.2.2}%
+\contentsline {subsection}{\numberline {5.2.3}Fluxo de processamento de uma requisição}{37}{subsection.5.2.3}%
+\contentsline {subsection}{\numberline {5.2.4}Concorrência e limites operacionais}{38}{subsection.5.2.4}%
+\contentsline {subsection}{\numberline {5.2.5}Implantação e segurança}{39}{subsection.5.2.5}%
+\contentsline {section}{\numberline {5.3}Modelagem dos Dados}{40}{section.5.3}%
+\contentsline {subsection}{\numberline {5.3.1}Decisão sobre o armazenamento}{40}{subsection.5.3.1}%
+\contentsline {subsection}{\numberline {5.3.2}Modelo de configuração}{41}{subsection.5.3.2}%
+\contentsline {subsection}{\numberline {5.3.3}Modelo de auditoria}{41}{subsection.5.3.3}%
+\contentsline {subsection}{\numberline {5.3.4}Mapeamento relacional proposto}{43}{subsection.5.3.4}%
+\contentsline {section}{\numberline {5.4}Interfaces}{45}{section.5.4}%
+\contentsline {subsection}{\numberline {5.4.1}Interface de linha de comando}{45}{subsection.5.4.1}%
+\contentsline {subsection}{\numberline {5.4.2}Interface de terminal (TUI)}{46}{subsection.5.4.2}%
+\contentsline {section}{\numberline {5.5}Diagrama de Classes}{46}{section.5.5}%
+\setlength {\cftchapterindent }{0em} \setlength {\cftchapternumwidth }{\cftlastnumwidth }
+\contentsline {chapter}{\chapternumberline {6}\MakeTextUppercase []{Desenvolvimento da Solução}}{48}{chapter.6}%
+\contentsline {section}{\numberline {6.1}Preparação do Ambiente}{48}{section.6.1}%
+\contentsline {section}{\numberline {6.2}Organização do Repositório}{49}{section.6.2}%
+\contentsline {section}{\numberline {6.3}Implementação por Incrementos}{49}{section.6.3}%
+\contentsline {section}{\numberline {6.4}Reuniões de Acompanhamento}{52}{section.6.4}%
+\contentsline {section}{\numberline {6.5}Registro das Decisões}{52}{section.6.5}%
+\contentsline {section}{\numberline {6.6}Atualizações da Documentação}{54}{section.6.6}%
+\setlength {\cftchapterindent }{0em} \setlength {\cftchapternumwidth }{\cftlastnumwidth }
+\contentsline {chapter}{\chapternumberline {7}\MakeTextUppercase []{Testes e Validação}}{56}{chapter.7}%
+\contentsline {section}{\numberline {7.1}Planejamento dos Testes}{56}{section.7.1}%
+\contentsline {subsection}{\numberline {7.1.1}Objetivos e níveis}{56}{subsection.7.1.1}%
+\contentsline {subsection}{\numberline {7.1.2}Ambiente, dados e critérios}{56}{subsection.7.1.2}%
+\contentsline {section}{\numberline {7.2}Casos de Teste}{57}{section.7.2}%
+\contentsline {subsection}{\numberline {7.2.1}Testes automatizados existentes}{57}{subsection.7.2.1}%
+\contentsline {subsection}{\numberline {7.2.2}Casos de teste de integração e de sistema}{57}{subsection.7.2.2}%
+\contentsline {section}{\numberline {7.3}Execução e Registro de Evidências}{57}{section.7.3}%
+\contentsline {subsection}{\numberline {7.3.1}Procedimento}{57}{subsection.7.3.1}%
+\contentsline {subsection}{\numberline {7.3.2}Resultados dos testes automatizados}{58}{subsection.7.3.2}%
+\contentsline {subsection}{\numberline {7.3.3}Resultados dos testes de integração}{59}{subsection.7.3.3}%
+\contentsline {subsection}{\numberline {7.3.4}Resultados de desempenho}{59}{subsection.7.3.4}%
+\contentsline {subsection}{\numberline {7.3.5}Evidências adicionais documentadas no repositório}{59}{subsection.7.3.5}%
+\contentsline {subsection}{\numberline {7.3.6}Modelo de registro de evidências}{59}{subsection.7.3.6}%
+\contentsline {section}{\numberline {7.4}Problemas Identificados e Correções}{60}{section.7.4}%
+\contentsline {section}{\numberline {7.5}Rastreabilidade entre Requisitos e Testes}{61}{section.7.5}%
+\contentsline {section}{\numberline {7.6}Síntese}{61}{section.7.6}%
+\setlength {\cftchapterindent }{0em} \setlength {\cftchapternumwidth }{\cftlastnumwidth }
+\contentsline {chapter}{\chapternumberline {8}\MakeTextUppercase []{Experimento e Coleta de Dados}}{65}{chapter.8}%
+\contentsline {section}{\numberline {8.1}Descrição do Experimento}{65}{section.8.1}%
+\contentsline {section}{\numberline {8.2}Processo de coleta de dados}{65}{section.8.2}%
+\contentsline {section}{\numberline {8.3}Resultados Obtidos}{65}{section.8.3}%
+\contentsline {section}{\numberline {8.4}Survey}{65}{section.8.4}%
+\setlength {\cftchapterindent }{0em} \setlength {\cftchapternumwidth }{\cftlastnumwidth }
+\contentsline {chapter}{\chapternumberline {9}\MakeTextUppercase []{Conclusões}}{66}{chapter.9}%
+\contentsline {section}{\numberline {9.1}Trabalhos futuros}{66}{section.9.1}%
+\vspace {\cftbeforechapterskip }
+\setlength {\cftchapterindent }{\cftlastnumwidth } \setlength {\cftchapternumwidth }{2em}
+\contentsline {chapter}{\MakeTextUppercase []{\textbf {Referências}}}{67}{section*.43}%
+\setlength {\cftchapterindent }{0em} \setlength {\cftchapternumwidth }{\cftlastnumwidth }
+\contentsline {appendix}{\chapternumberline {A}\MakeTextUppercase []{Apêndice}}{68}{appendix.A}%

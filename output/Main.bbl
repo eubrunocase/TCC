@@ -1,0 +1,68 @@
+\providecommand{\abntreprintinfo}[1]{%
+ \citeonline{#1}}
+\setlength{\labelsep}{0pt}\begin{thebibliography}{}
+\providecommand{\abntrefinfo}[3]{}
+\providecommand{\abntbstabout}[1]{}
+\abntbstabout{v-1.9.7 }
+
+\bibitem[Atrassi, Idrissi e Benkaouz 2025]{elatrassi2025codewisp}
+\abntrefinfo{Atrassi, Idrissi e Benkaouz}{ATRASSI; IDRISSI; BENKAOUZ}{2025}
+{ATRASSI, H. E.; IDRISSI, Y. E.; BENKAOUZ, Y. Codewisp: Ast guided retrieval
+  augmented generation for code generation and completion. In:  \emph{2025 12th
+  International Conference on Wireless Networks and Mobile Communications
+  (WINCOM)}. [S.l.: s.n.], 2025. p.~1--6.
+ISSN 2769-9994.}
+
+\bibitem[Khan e Rajagopalan 2025]{khan2025aipowered}
+\abntrefinfo{Khan e Rajagopalan}{KHAN; RAJAGOPALAN}{2025}
+{KHAN, A.; RAJAGOPALAN, S. Ai-powered text screening: A generative approach to
+  identifying sensitive information. In:  \emph{2025 11th International
+  Conference on Computer and Communications (ICCC)}. [S.l.: s.n.], 2025. p.
+  438--446.
+ISSN 2837-7109.}
+
+\bibitem[Pan e Wu 2025]{pan2025selective}
+\abntrefinfo{Pan e Wu}{PAN; WU}{2025}
+{PAN, Q.; WU, J. Selective privacy-preserving federated learning for large
+  language model fine-tuning. In:  \emph{2025 International Wireless
+  Communications and Mobile Computing (IWCMC)}. [S.l.: s.n.], 2025. p.
+  1626--1631.
+ISSN 2376-6506.}
+
+\bibitem[Rahman et al. 2025]{rahman2025secret}
+\abntrefinfo{Rahman et al.}{RAHMAN et al.}{2025}
+{RAHMAN, M.~N. et al. Secret breach detection in source code with large
+  language models. In:  \emph{2025 ACM/IEEE International Symposium on
+  Empirical Software Engineering and Measurement (ESEM)}. [S.l.: s.n.], 2025.
+  p. 207--217.}
+
+\bibitem[Sakapertana et al. 2025]{sakapertana2025advancing}
+\abntrefinfo{Sakapertana et al.}{SAKAPERTANA et al.}{2025}
+{SAKAPERTANA, A.~S. et al. Advancing data privacy in rest apis: A comparative
+  study of machine learning techniques for pii detection. In:  \emph{2025
+  International Conference on Smart Computing, IoT and Machine Learning
+  (SIML)}. [S.l.: s.n.], 2025. p.~1--6.}
+
+\bibitem[Tsebak, Banakh e Piskozub 2025]{tsebak2025enhancing}
+\abntrefinfo{Tsebak, Banakh e Piskozub}{TSEBAK; BANAKH; PISKOZUB}{2025}
+{TSEBAK, M.; BANAKH, R.; PISKOZUB, A. Enhancing the efficiency of secret
+  detection in version control systems using machine learning methods. In:
+  \emph{2025 IEEE 5th International Conference on Smart Information Systems and
+  Technologies (SIST)}. [S.l.: s.n.], 2025. p.~1--8.}
+
+\bibitem[Xu et al. 2025]{xu2025privacypreserving}
+\abntrefinfo{Xu et al.}{XU et al.}{2025}
+{XU, P. et al. Privacy-preserving large language model in terms of secure
+  computing: A survey. In:  \emph{2025 2nd International Conference on
+  Algorithms, Software Engineering and Network Security (ASENS)}. [S.l.: s.n.],
+  2025. p. 286--294.}
+
+\bibitem[Zhang et al. 2024]{zhang2024privacyasst}
+\abntrefinfo{Zhang et al.}{ZHANG et al.}{2024}
+{ZHANG, X. et al. Privacyasst: Safeguarding user privacy in tool-using large
+  language model agents.
+\emph{IEEE Transactions on Dependable and Secure Computing}, v.~21, n.~6, p.
+  5242--5258, Nov 2024.
+ISSN 1941-0018.}
+
+\end{thebibliography}

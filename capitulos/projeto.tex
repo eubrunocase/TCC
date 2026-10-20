@@ -1,0 +1,261 @@
+\chapter{Projeto da Solução}\label{chp:proj}
+
+Este capítulo apresenta o projeto do mecanismo: a arquitetura, a modelagem dos dados persistidos e os diagramas que descrevem estrutura e comportamento. As decisões aqui descritas atendem aos requisitos do Capítulo~\ref{chp:req}; o registro cronológico e a justificativa de cada decisão estão na Seção~\ref{sec:dev_decisoes}.
+
+\section{Princípios de Projeto}
+
+A lacuna identificada na literatura (Capítulo~\ref{chp:fund}) orienta cinco princípios:
+
+\begin{itemize}
+    \item \textbf{Intermediação transparente:} a proteção é aplicada em um ponto de aplicação de política situado entre o cliente e o provedor, sem alterar a ferramenta de desenvolvimento, em linha com o padrão de proxies reversos e \textit{gateways} descrito na Seção~\ref{sec:trabalhos_relacionados}.
+    \item \textbf{Agnosticismo:} requisições de IA são reconhecidas pelo conteúdo, e não pelo destino, para funcionar com ferramentas e provedores distintos (RF08, RNF11).
+    \item \textbf{Seletividade:} padrões embutidos e personalizados podem ser ativados individualmente, evitando redação indiscriminada (RF11, RF12).
+    \item \textbf{Execução local e mínima exposição:} o processamento ocorre na máquina do desenvolvedor e o registro de auditoria não contém o conteúdo das requisições (RNF04, RNF05).
+    \item \textbf{Não interferência:} registro e interface são desacoplados do caminho crítico, de modo que sua lentidão não atrase as requisições (RNF09).
+\end{itemize}
+
+\section{Arquitetura}
+\label{sec:proj_arq}
+
+\subsection{Visão geral}
+
+A solução é um único processo, compilado em um binário, que combina um proxy HTTP/HTTPS com terminação TLS e um \textit{pipeline} de filtragem e análise. A Figura~\ref{fig:arq} mostra os componentes e o fluxo de dados, e a Tabela~\ref{tab:componentes} descreve a responsabilidade de cada um e os requisitos que realiza. A organização em pacotes do código-fonte é apresentada na Seção~\ref{sec:dev_repo}.
+
+\begin{figure}[htb]
+\centering
+\caption{Arquitetura do mecanismo proposto}\label{fig:arq}
+\diagrama{arquitetura}{width=\textwidth}{Componentes e fluxo de dados: ferramenta de IA, proxy MITM, filtro, inferência de provedor, analisador, auditoria, configuração, TUI, gestor e instalador de CA, diagnóstico, arquivos locais e provedores de LLM (Tabela~\ref{tab:componentes}).}
+\fonte{Elaborado pela equipe (2026). Amarelo: entidades externas; azul: componentes; cinza: armazenamento local.}
+\end{figure}
+
+\begin{table}[htb]
+\centering
+\caption{Componentes da arquitetura}\label{tab:componentes}
+\small
+\begin{tabular}{|p{3.0cm}|p{8.3cm}|p{2.6cm}|}
+\hline
+\textbf{Componente} & \textbf{Responsabilidade} & \textbf{Requisitos} \\ \hline
+Ponto de entrada & Interpreta subcomandos e \textit{flags} (execução, TUI, \textit{dry-run}, diagnóstico, versão), orquestra a inicialização e o encerramento controlado. & RF01, RF22, RF23 \\ \hline
+Gestor de CA & Gera e persiste o par certificado/chave da CA local; instala o certificado no repositório do sistema, com implementação específica por sistema operacional. & RF02, RF03 \\ \hline
+Proxy MITM & Escuta na porta configurada, termina o TLS com certificados emitidos pela CA local, aplica o \textit{pipeline} a cada requisição e encaminha o resultado ao provedor; trata erros de conexão e limites de tempo. & RF01, RF04, RF13, RF16 \\ \hline
+Filtro de requisições & Decide se uma requisição deve ser analisada (método, tipo de conteúdo, listas de \textit{hosts}, modo de operação, presença de campos de IA no corpo). & RF05--RF08 \\ \hline
+Inferência de provedor & Deduz provedor e modelo a partir do corpo e, como alternativa, do \textit{host}. & RF09 \\ \hline
+Analisador & Aplica os padrões compilados ao corpo; substitui ocorrências pelo rótulo ou apenas as contabiliza, no modo \textit{dry-run}. & RF10, RF12--RF14 \\ \hline
+Configuração & Carrega o arquivo YAML (ou os padrões por omissão), compila padrões e persiste alterações feitas pela TUI. & RF11, RF12, RF17 \\ \hline
+Auditoria & Converte eventos em registros JSON e os grava de forma assíncrona, por um conjunto de \textit{workers}. & RF15, RF16 \\ \hline
+TUI & Exibe o painel em tempo real e telas de edição de padrões e do proxy. & RF18--RF20 \\ \hline
+Diagnóstico & Verifica a instalação da CA e a disponibilidade da porta. & RF21 \\ \hline
+\end{tabular}
+\fonte{Elaborado pela equipe (2026).}
+\end{table}
+
+\subsection{Estilo arquitetural}
+
+O estilo é o de um \textit{proxy} intermediário com \textit{pipeline} de filtros: cada requisição atravessa estágios sucessivos (filtragem, inferência, análise e registro), e cada estágio tem uma única responsabilidade. Os componentes de configuração, auditoria e interface são periféricos ao caminho crítico e se comunicam com o núcleo por estruturas explícitas: a configuração é lida na inicialização, os eventos são enviados à auditoria por uma fila com capacidade fixa e à TUI por um canal com capacidade fixa. Se a fila de auditoria ou o canal da TUI estiverem cheios, o evento é descartado em vez de bloquear a requisição; essa escolha privilegia a latência e a disponibilidade do fluxo do desenvolvedor sobre a completude do registro e é discutida como decisão arquitetural na Seção~\ref{sec:dev_decisoes}.
+
+\subsection{Fluxo de processamento de uma requisição}
+
+A Figura~\ref{fig:seq} apresenta a sequência de interações para uma requisição HTTPS de uma ferramenta de IA. O cliente solicita um túnel (\texttt{CONNECT}); o proxy responde apresentando um certificado assinado pela CA local e passa a receber a requisição decifrada. Em seguida, o proxy consulta o filtro e a inferência de provedor, aciona o analisador, publica o evento para a auditoria sem esperar sua conclusão e encaminha ao provedor a requisição já sanitizada. A resposta retorna ao cliente sem inspeção.
+
+\begin{figure}[htb]
+\centering
+\caption{Diagrama de sequência do processamento de uma requisição de IA}\label{fig:seq}
+\diagrama{sequencia}{width=\textwidth}{Sequência: ferramenta de IA, proxy, filtro e inferência, analisador, auditoria e provedor de LLM, conforme os passos descritos no texto.}
+\fonte{Elaborado pelo autor (2026). Setas tracejadas: retornos; seta de ponta aberta: chamada assíncrona.}
+\end{figure}
+
+As Figuras~\ref{fig:fluxoa} e~\ref{fig:fluxob} detalham a lógica de decisão. A primeira trata da pré-filtragem: apenas requisições \texttt{POST} ou \texttt{PUT} com corpo JSON ou de formulário, destinadas a \textit{hosts} não ignorados e permitidos pelo modo de operação, cujo corpo contenha campos característicos de requisições de IA, avançam para a análise; as demais são registradas como ignoradas e encaminhadas sem alteração. A segunda trata da análise e da sanitização: se algum padrão for detectado, o corpo é substituído (ou mantido, no modo \textit{dry-run}) e o evento é registrado antes do encaminhamento.
+
+\begin{figure}[htb]
+\centering
+\caption{Fluxograma da pré-filtragem de requisições}\label{fig:fluxoa}
+\diagrama{fluxo_a}{height=0.52\textheight,keepaspectratio}{Fluxograma da pré-filtragem: CONNECT, leitura do corpo, método e tipo de conteúdo, \textit{hosts} ignorados, modo \textit{whitelist}, campos de IA; saída para requisição ignorada ou para análise.}
+\fonte{Elaborado pela equipe (2026).}
+\end{figure}
+
+\begin{figure}[htb]
+\centering
+\caption{Fluxograma da análise e da sanitização}\label{fig:fluxob}
+\diagrama{fluxo_b}{height=0.52\textheight,keepaspectratio}{Fluxograma da análise: inferência de provedor, análise por padrões, detecção, modo \textit{dry-run}, redação, registro de auditoria e encaminhamento.}
+\fonte{Elaborado pelo autor (2026).}
+\end{figure}
+
+\subsection{Concorrência e limites operacionais}
+
+O servidor atende conexões de forma concorrente, e o registro de auditoria utiliza um \textit{pool} de quatro \textit{workers} sobre uma fila com capacidade para cem eventos; o canal de eventos da TUI comporta 128 itens. O servidor define limites de 30~s para leitura e escrita e de 60~s para conexões ociosas, e falhas de conexão em túneis resultam em resposta \texttt{502} ao cliente e em um registro de erro; em requisições HTTP simples, a verificação registrou resposta de erro com status 500 (Seção~\ref{sec:test_exec}). A análise é limitada a corpos de até 5~MiB. Nas conexões interceptadas, a negociação é restrita ao HTTP/1.1.
+
+\subsection{Implantação e segurança}
+
+O mecanismo é implantado na própria máquina do desenvolvedor, e a ferramenta de IA é configurada para usá-lo como proxy (por exemplo, por meio das variáveis de ambiente de proxy ou de configuração da ferramenta). A CA local é o ativo mais sensível: a chave privada é gerada com 4096 bits, gravada com permissão restrita ao proprietário e excluída do controle de versão, e o certificado possui validade de dez anos. Os riscos principais, já mapeados na documentação do projeto, são o vazamento da chave da CA e o comprometimento do binário; as mitigações são a manutenção da chave exclusivamente local, a verificação de integridade dos binários por \textit{checksum} SHA-256 e a distribuição apenas por fontes oficiais. A seção de problemas (Seção~\ref{sec:test_problemas}) registra ainda um \textit{script} de conveniência que desativa a verificação de certificados no processo da ferramenta cliente, prática que deve ser substituída pela confiança explícita na CA.
+
+\section{Modelagem dos Dados}
+\label{sec:proj_dados}
+
+\subsection{Decisão sobre o armazenamento}
+
+O mecanismo não utiliza um sistema gerenciador de banco de dados (SGBD). A decisão decorre do perfil dos dados: (i) a configuração é pequena, editada por humanos e lida uma única vez na inicialização; (ii) o registro de auditoria é uma sequência de eventos imutáveis, gravados apenas por inclusão e lidos por ferramentas externas; (iii) o requisito de instalação como binário único, sem dependências e sem serviços em segundo plano (RNF07), tornaria a inclusão de um SGBD um custo de implantação desproporcional ao ganho. Em contrapartida, não há consultas ad hoc nativas, integridade referencial imposta pelo armazenamento nem controle de concorrência entre processos; as consequências dessa escolha são tratadas na Seção~\ref{sec:proj_relacional}.
+
+Assim, a persistência é feita por três artefatos: um arquivo YAML de configuração, um arquivo de auditoria no formato JSON Lines (um objeto JSON por linha) e o par de arquivos PEM da CA. Para fins de projeto, os dados foram modelados com a notação entidade-relacionamento, de modo que o modelo seja independente do formato físico e possa ser mapeado para um banco relacional, caso a evolução do projeto o justifique.
+
+\subsection{Modelo de configuração}
+
+A Figura~\ref{fig:er_cfg} mostra o modelo da configuração. A configuração possui exatamente uma seção de proxy, nove definições de padrões embutidos (cuja habilitação é controlada por oito indicadores, pois os padrões de chave de acesso e de chave secreta da AWS compartilham um único indicador) e um número arbitrário de padrões personalizados. As expressões e os rótulos dos padrões embutidos são constantes do código, e somente o indicador de habilitação é configurável.
+
+\begin{figure}[htb]
+\centering
+\caption{Modelo entidade-relacionamento da configuração}\label{fig:er_cfg}
+\diagrama{dados_config}{width=0.88\textwidth}{Modelo entidade-relacionamento: CONFIGURACAO, SECAO\_PROXY, PADRAO\_EMBUTIDO e PADRAO\_PERSONALIZADO (Tabela~\ref{tab:dd_cfg}).}
+\fonte{Elaborado pela equipe (2026).}
+\end{figure}
+
+\begin{table}[htb]
+\centering
+\caption{Dicionário de dados da configuração (arquivo YAML)}\label{tab:dd_cfg}
+\small
+\begin{tabular}{|p{4.1cm}|p{2.3cm}|p{7.5cm}|}
+\hline
+\textbf{Campo (caminho YAML)} & \textbf{Tipo} & \textbf{Descrição e regras} \\ \hline
+\texttt{port} & inteiro & Porta de escuta; valor ausente ou zero equivale a 9000. \\ \hline
+\texttt{proxy.mode} & texto & \texttt{whitelist} (padrão) ou \texttt{passive}. \\ \hline
+\texttt{proxy.allowed\_hosts} & lista de texto & \textit{Hosts} analisados no modo \textit{whitelist}; admite curinga \texttt{*.dominio}. \\ \hline
+\texttt{proxy.skip\_hosts} & lista de texto & \textit{Hosts} sempre ignorados; admite curingas (por exemplo, \texttt{*.telemetry.*}). \\ \hline
+\texttt{analyzer.built\_in.} & booleano & Habilita ou desabilita cada padrão embutido (oito indicadores). \\ \hline
+\texttt{analyzer.custom\_patter} & texto & Nome do padrão personalizado. \\ \hline
+\texttt{...type} & texto & \texttt{regex} ou \texttt{literal}; outros valores são ignorados com aviso. \\ \hline
+\texttt{...pattern} & texto & Expressão regular (tipo \texttt{regex}); se inválida, o padrão é ignorado com aviso. \\ \hline
+\texttt{...values} & lista de texto & Valores exatos (tipo \texttt{literal}); valores vazios são descartados. \\ \hline
+\texttt{...label} & texto & Marcador que substitui cada ocorrência detectada. \\ \hline
+\texttt{...enabled} & booleano & Indica se o padrão participa da análise. \\ \hline
+\end{tabular}
+\fonte{Elaborado pela equipe (2026).}
+\end{table}
+
+\subsection{Modelo de auditoria}
+
+A Figura~\ref{fig:er_aud} mostra o modelo do registro de auditoria. Cada execução do proxy define uma sessão, identificada por um código de oito caracteres hexadecimais derivado do instante de início, e uma máquina, identificada por um \textit{hash} truncado do nome do computador. Cada requisição processada, ignorada ou com erro gera uma entrada. Na implementação, a lista de padrões detectados é armazenada como \textit{vetor} dentro da própria entrada (forma desnormalizada, natural em JSON); no modelo conceitual, ela é representada como a entidade associativa \texttt{PADRAO\_DETECTADO}, o que explicita a relação de um para muitos.
+
+\begin{figure}[htb]
+\centering
+\caption{Modelo entidade-relacionamento do registro de auditoria}\label{fig:er_aud}
+\diagrama{dados_audit}{width=0.86\textwidth}{Modelo entidade-relacionamento: SESSAO, ENTRADA\_AUDITORIA e PADRAO\_DETECTADO (Tabela~\ref{tab:dd_aud}).}
+\fonte{Elaborado pela equipe (2026).}
+\end{figure}
+
+{\small
+\begin{longtable}{|p{4.2cm}|p{1.9cm}|p{7.6cm}|}
+\caption{Dicionário de dados da entrada de auditoria (campos JSON)}\label{tab:dd_aud}\\
+\hline
+\textbf{Campo} & \textbf{Tipo} & \textbf{Descrição} \\ \hline
+\endfirsthead
+\hline
+\textbf{Campo} & \textbf{Tipo} & \textbf{Descrição} \\ \hline
+\endhead
+\texttt{timestamp} & texto & Instante do evento em RFC~3339. \\ \hline
+\texttt{request\_id} & texto & Identificador único da requisição. \\ \hline
+\texttt{session\_id}, \texttt{machine\_id} & texto & Identificadores da sessão e da máquina. \\ \hline
+\texttt{host}, \texttt{path}, \texttt{method} & texto & Destino e método da requisição. \\ \hline
+\texttt{provider}, \texttt{model} & texto & Provedor inferido (ou \texttt{skipped} para requisições ignoradas) e modelo informado. \\ \hline
+\texttt{redacted} & booleano & Indica se houve ocorrência detectada. \\ \hline
+\texttt{pattern\_count} & inteiro & Total de ocorrências detectadas. \\ \hline
+\texttt{detected\_patterns} & lista de texto & Nomes dos padrões que dispararam. \\ \hline
+\texttt{redaction\_positions} & lista de texto & Localização das ocorrências (atualmente o valor genérico \texttt{body}). \\ \hline
+\texttt{message\_count} & inteiro & Número de mensagens do corpo. \\ \hline
+\texttt{has\_system\_prompt}, \texttt{stream} & booleano & Presença de instrução de sistema e uso de resposta em fluxo. \\ \hline
+\texttt{request\_body\_size} & inteiro & Tamanho do corpo da requisição. \\ \hline
+\texttt{response\_body\_size}, \texttt{response\_status} & inteiro & Previstos para a resposta; hoje não preenchidos. \\ \hline
+\texttt{proxy\_latency\_ms} & inteiro & Tempo decorrido até a conclusão do processamento da requisição pelo proxy, em milissegundos. \\ \hline
+\texttt{analysis\_duration\_ms} & inteiro & Duração da análise do corpo, em milissegundos. \\ \hline
+\texttt{proxy\_error}, \texttt{error\_message} & booleano; texto & Indicam falha de conexão e sua descrição. \\ \hline
+\texttt{was\_blocked} & booleano & Previsto para bloqueio de requisição; hoje não utilizado. \\ \hline
+\end{longtable}
+}
+\noindent\fonte{Elaborado pela equipe (2026), a partir da definição do registro no código-fonte.}
+
+Dois aspectos do modelo são relevantes para a integridade dos dados: o registro não contém o conteúdo da requisição nem os valores detectados, apenas metadados e contagens (RNF05); e, por ser um arquivo de inclusão, não há atualização ou exclusão de entradas pelo mecanismo.
+
+\subsection{Mapeamento relacional proposto}
+\label{sec:proj_relacional}
+
+A ausência de um SGBD limita as análises que o responsável por governança poderia realizar sobre a trilha de auditoria (por exemplo, quais padrões são mais frequentes por provedor ao longo do tempo). Como proposta de evolução, não implementada nesta etapa, o modelo da Figura~\ref{fig:er_aud} pode ser mapeado para um banco relacional embarcado, que preservaria a instalação como binário único. O Listagem~\ref{lst:ddl} apresenta o esquema sugerido, com a lista de padrões normalizada e índices por instante e por provedor.
+
+\begin{lstlisting}[language=SQL, basicstyle=\ttfamily\scriptsize, frame=single, caption={Esquema relacional proposto para a trilha de auditoria}, label={lst:ddl}, breaklines=true, captionpos=t]
+CREATE TABLE sessao (
+  id_sessao  TEXT PRIMARY KEY,
+  id_maquina TEXT NOT NULL
+);
+CREATE TABLE entrada_auditoria (
+  id_requisicao     TEXT PRIMARY KEY,
+  id_sessao         TEXT NOT NULL REFERENCES sessao(id_sessao),
+  ocorrido_em       TIMESTAMP NOT NULL,
+  host              TEXT NOT NULL,
+  provedor          TEXT NOT NULL,
+  caminho           TEXT,
+  metodo            TEXT NOT NULL,
+  modelo            TEXT,
+  redigida          BOOLEAN NOT NULL,
+  qtd_padroes       INTEGER NOT NULL DEFAULT 0,
+  qtd_mensagens     INTEGER,
+  tem_prompt_sistema BOOLEAN,
+  stream            BOOLEAN,
+  tam_requisicao    INTEGER,
+  status_http       INTEGER,
+  latencia_proxy_us INTEGER,
+  duracao_analise_us INTEGER,
+  erro_proxy        BOOLEAN NOT NULL DEFAULT FALSE,
+  mensagem_erro     TEXT
+);
+CREATE TABLE padrao_detectado (
+  id_requisicao TEXT NOT NULL REFERENCES entrada_auditoria(id_requisicao),
+  nome_padrao   TEXT NOT NULL,
+  PRIMARY KEY (id_requisicao, nome_padrao)
+);
+CREATE INDEX ix_auditoria_tempo    ON entrada_auditoria(ocorrido_em);
+CREATE INDEX ix_auditoria_provedor ON entrada_auditoria(provedor, redigida);
+\end{lstlisting}
+
+O esquema substitui os campos de latência em milissegundos por campos em microssegundos, correção motivada pela limitação descrita na Seção~\ref{sec:test_problemas} (análises com duração inferior a um milissegundo são registradas como zero). Os campos \texttt{was\_blocked} e \texttt{redaction\_positions} foram omitidos por não terem uso efetivo na versão atual.
+
+\section{Interfaces}
+
+\subsection{Interface de linha de comando}
+
+\begin{table}[htb]
+\centering
+\caption{Interface de linha de comando}\label{tab:cli}
+\small
+\begin{tabular}{|p{4.3cm}|p{9.6cm}|}
+\hline
+\textbf{Comando} & \textbf{Efeito} \\ \hline
+\textit{(sem argumentos)} & Inicia o proxy em modo \textit{headless}, com saída textual. \\ \hline
+\texttt{--tui} & Inicia o proxy com a interface interativa de terminal. \\ \hline
+\texttt{--dry-run} & Detecta e registra, sem modificar as requisições; combinável com \texttt{--tui}. \\ \hline
+\texttt{doctor} & Executa o diagnóstico do ambiente (CA e porta). \\ \hline
+\texttt{version}, \texttt{help} & Exibem a versão do binário e a ajuda. \\ \hline
+\end{tabular}
+\fonte{Elaborado pela equipe (2026).}
+\end{table}
+
+\subsection{Interface de terminal (TUI)}
+
+A TUI é composta por três telas, navegáveis por atalhos de teclado: o \textit{painel}, que exibe contadores (total, redigidas, erros), distribuição por provedor e os últimos eventos, além de indicador de modo \textit{dry-run}; a tela de \textit{padrões}, com a lista de padrões embutidos (alternância de habilitação) e personalizados (criação, edição e exclusão com validação imediata da expressão regular); e a tela de \textit{configuração do proxy}, com porta, modo e listas de \textit{hosts}. Alterações são gravadas no arquivo de configuração e passam a valer na próxima inicialização do proxy.
+
+\section{Diagrama de Classes}
+\label{sec:proj_classes}
+
+As Figuras~\ref{fig:classes_a} e~\ref{fig:classes_b} apresentam as principais estruturas do código, divididas em dois grupos: configuração e análise, e registro e interface. Os nomes foram mantidos como no código-fonte e os atributos, simplificados.
+
+\begin{figure}[htb]
+\centering
+\caption{Diagrama de classes: configuração e análise}\label{fig:classes_a}
+\diagrama{classes_a}{width=\textwidth}{Classes de configuração e análise: Config, ProxySection, AnalyzerConfig, BuiltInConfig, CustomPattern, CompiledPattern, Analyzer e AnalysisResult.}
+\fonte{Elaborado pela equipe (2026).}
+\end{figure}
+
+\begin{figure}[htb]
+\centering
+\caption{Diagrama de classes: registro e interface}\label{fig:classes_b}
+\diagrama{classes_b}{width=0.82\textwidth}{Classes de registro e interface: ProviderInfo, LogRequest, LogWorkerPool, AuditEntry, AuditLogger e Model (TUI).}
+\fonte{Elaborado pela equipe (2026).}
+\end{figure}
+
+O analisador é intencionalmente simples: mantém a lista de padrões compilados e um indicador de simulação, e sua operação principal recebe o corpo e devolve um resultado com o corpo transformado, os nomes dos padrões e a contagem de ocorrências. Essa interface estreita facilita a evolução prevista no requisito RF25, pois novos mecanismos de detecção podem ser incorporados sem alterar o proxy.

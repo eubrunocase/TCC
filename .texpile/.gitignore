@@ -1,0 +1,7 @@
+*
+!.gitignore
+!comments.jsonl
+!config.json
+!snippets.json
+!packages/
+!packages/*.json

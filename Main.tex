@@ -1,0 +1,160 @@
+\documentclass[12pt, openany, oneside, a4paper, english, brazil]{abntex2}   % Padrão Abntex2
+
+\input{style/packages.tex} % resto dos pacotes Latex
+%\usepackage[english]{style/UCSAL-Template} % personalização da ABNTEX2 para escrita em inglês
+\usepackage[portuguese]{style/ucsal} % personalização da ABNTEX2 para escrita em português
+\usepackage{longtable}
+\usepackage{blindtext}
+\DisemulatePackage{setspace}
+\usepackage{setspace}
+\usepackage{lipsum}
+\usepackage[left=3cm,top=3cm,right=2cm,bottom=2cm]{geometry}
+\usepackage{fontspec}
+\setmainfont{Arial}
+
+% --- Entrega 2: diagramas, listagens e marcador de pendências ---
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,shapes.geometric}
+\newcommand{\diagrama}[3]{\IfFileExists{figuras/#1.png}{\includegraphics[#2]{figuras/#1.png}}{\IfFileExists{figuras/#1.pdf}{\includegraphics[#2]{figuras/#1.pdf}}{\fbox{\parbox{0.92\textwidth}{\centering\vspace{1.2cm}\textcolor{red!70!black}{\textbf{[DIAGRAMA PENDENTE: \detokenize{figuras/#1.png}]}}\\[3pt]\small #3\vspace{1.2cm}}}}}} % espaço reservado até existir o arquivo
+\newcommand{\pendente}[1]{\textcolor{red!70!black}{\textbf{[PENDENTE: #1]}}} % remover antes da entrega final
+
+
+%inserindo apenas uma página
+
+%---------------------------------------------------------------
+%--------- DADOS BÁSICOS DO TRABALHO (Preencher todos) ---------
+%---------------------------------------------------------------
+
+
+\titulo{Segurança e Governança de Dados com uso de LLMs no Desenvolvimento de Software}   % Título do Trabalho em Português
+
+\tituloingles{Study of the need to insert programming education in secondary and elementary education} % Título do Trabalho em Inglês
+
+\palavraschave{SEU TEMA}  % 5 palavras-chave
+
+\keywords{1. Programming teaching. 2. Young people's lack of IT information. 3. Need of the IT job market.}   % 5 palavras-chave para resumo em inglês
+
+%\DEELautor{{ALUNO} {\\ aluno2 }}   %Aluno autor do trabalho
+%
+%}
+
+\autor{Bruno Dantas de Oliveira \\ Zaira Dutra Pinto Souza \\ Gustavo Ricci Ferreira \\ Matheus Pires Fraga \\ Caio Caldas Matos de Morais}
+\curso{Bacharelado em Engenharia de Software}												
+\orientador{Prof. Sheila Tirony}  % Professor Orientador membro da banca 
+
+\membrob{Prof. Me. Segundo professor}   % Professor membro da banca 
+\membroc{Prof. Me. Terceiro professor}   % Professor membro da banca
+
+\local{Salvador}   % Cidade da instituição
+\data{2022}        % Ano de realização
+
+%--------------------------------------------------------------------------------------------
+
+
+
+\begin{document}
+\onehalfspacing
+
+% Seleção automática do idioma, não alterar
+\ifx\isenglish\undefined
+    \selectlanguage{brazil}
+\else
+    \selectlanguage{english}
+\fi
+
+% Texto da Dedicatória (OBS: dedicatória é opcional)
+% Caso não queira inserir, deixe em branco ( \dedicatoria{} )
+\DEELdedicatoria{Dedico este trabalho a todos aqueles.... \\}  
+    
+% Texto dos Agradecimentos (OBS: Agradecimentos é opcional)
+% Caso não queira inserir, deixe em branco ( \agradecimentos{} )
+\DEELagradecimentos{Agradeço primeiramente a ... } 
+
+                       
+% Texto da Epígrafe (OBS: Epígrafe é opcional)
+% Caso não queira inserir, deixe em branco ( \epigrafe{} )
+\DEELepigrafe{\textit{"ABC"} \\ (Albert Einstein)} 
+    
+
+% Texto do Resumo (OBS: Resumo é Obrigatório)
+\DEELresumo{XXXXX .
+ } 
+     
+% Texto do Abstract (OBS: Abstract é Obrigatório)
+\DEELabstract{ESCREVA AQUI SEU RESUMO em INGLES
+} 
+    
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Elementos Pré-Textuais%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\ElementosPreTextuais
+% Insere todos os elementos Pré-Textuais listados (capa, folha de rosto, ...)
+    % capa                   % Obrigatório
+    % folhaderosto           % Obrigatório
+    % folhaaprovacao         % Obrigatório
+	% dedicatoria            % Opcional
+	% agradecimentos         % Opcional
+    % epigrafe               % Opcional
+    % resumo                 % Obrigatório
+    % abstract               % Obrigatório
+
+%\newpage
+%--------Lista de figuras--------
+\ListaDeFiguras 
+%--------Lista de tabelas--------
+\ListaDeTabelas 
+%--------Lista de Siglas e Abreviaturas--------
+\include{list_siglas}   
+%--------Lista de Simbolos e Notação--------
+%\include{list_simbolos} 
+%--------Sumário-------
+\Sumario
+
+
+%%%%%%%%%%%%%%%%%%%%%%
+%%Elementos Textuais%%
+%%%%%%%%%%%%%%%%%%%%%%
+\textual 
+\include{capitulos/1_introducao} % Texto do cap1.tex
+\include{capitulos/3_fundamentacaoTeorica} % Texto do cap2.tex
+\include{capitulos/2_metodologia} % Texto do cap3.tex
+\include{capitulos/requisitos} % Levantamento e análise de requisitos
+\include{capitulos/projeto} % Projeto da solução
+\include{capitulos/desenvolvimento} % Desenvolvimento da solução
+\include{capitulos/testes} % Testes e validação
+\include{capitulos/4_resultados} % Texto do cap4.tex
+\include{capitulos/5_conclusoes} % Texto do cap5.tex
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%Elementos Pós-Textuais%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%--------Bibliografia--------
+\Bibliografia{referenciasbibliograficas} % arquivo bibtex com as referências (referenciasbibliograficas.bib)
+
+%%--------Apêndice--------
+%% Descomente caso exista a necessidade da inclusão de apêndices
+%\apendice % Comando que inclui os apêndices
+%\include{7_Apendice/apendice_1}   % Arquivo apendice_1.tex
+%\include{7_Apendice/apendice_2}   % Arquivo apendice_2.tex
+%%---------------------------------------------------------------
+
+%%--------Anexos-------------------------------------------------
+%% Descomente caso exista a necessidade da inclusão de anexos
+%\anexo % Comando que inclui os anexos (outros autores)
+%\include{8_Anexos/anexo_1}  % Arquivo anexo_1.tex
+%\include{8_Anexos/anexo_2}  % Arquivo anexo_2.tex
+%%---------------------------------------------------------------
+\appendix
+
+
+\chapter{Apêndice}
+
+
+
+
+\end{document}
