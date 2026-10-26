@@ -1,12 +1,44 @@
 \chapter{Conclusões}\label{chp:conc}
 
-\blindtext
+Este capítulo retoma o problema que motivou o trabalho, avalia o atendimento dos objetivos, apresenta as contribuições e as limitações e propõe caminhos para trabalhos futuros.
 
+\section{Retomada do Problema}
 
+O uso de assistentes de programação baseados em LLM faz com que o contexto do desenvolvedor, incluindo credenciais, \textit{tokens} e arquivos de configuração, seja enviado a provedores externos de IA como efeito colateral de um uso legítimo, o que escapa aos controles perimetrais tradicionais (Capítulo~\ref{chp:intro}). A revisão da literatura mostrou que as soluções existentes avaliam a detecção sobre artefatos estáticos, atuam no treinamento ou na arquitetura interna do agente, ou substituem o provedor externo por um modelo local, e que nenhum dos estudos analisados combina a interceptação do tráfego em tempo real, a independência de ferramenta e de provedor e a avaliação do impacto operacional (Capítulo~\ref{chp:fund}). O trabalho respondeu a essa lacuna com o projeto, a implementação e a verificação de um \textit{proxy} de segurança, o GalileuCLI.
 
-\section{Trabalhos futuros}
+\section{Avaliação dos Objetivos}
 
-\blindtext
+O objetivo geral, de projetar, implementar e avaliar o mecanismo, foi atingido de modo parcial. O mecanismo foi projetado e implementado: 24 dos 25 requisitos funcionais estão implementados, com arquitetura, modelo de dados e decisões documentados (OE2 a OE4). A avaliação, por sua vez, restringiu-se à verificação do artefato em condições controladas (OE5 e OE6), conforme a Tabela~\ref{tab:objetivos}.
 
+Os resultados permitem afirmar que, para as credenciais de formato conhecido e para os padrões configurados pelo usuário, a detecção e a redação funcionam nos casos testados, preservam a validade da requisição e não produziram falsos positivos no conjunto de teste, e que o custo de análise é da ordem de 2,7~ms por MiB, desprezível frente ao tempo de resposta de um LLM. Não permitem afirmar que o mecanismo seja eficaz em tráfego real, que funcione com ferramentas de IA reais sobre HTTPS em todas as plataformas, que o custo de ponta a ponta seja igualmente baixo ou que os usuários o considerem útil e aceitável. Quanto às questões de pesquisa, RQ1 a RQ4 foram respondidas pela revisão da literatura, e RQ5 apenas na dimensão do custo computacional da análise.
 
+\section{Contribuições}
 
+\begin{itemize}
+    \item \textbf{Artefato:} um \textit{proxy} de código aberto (Apache~2.0), distribuído como binário único para macOS, Linux e Windows, que detecta e redige credenciais no tráfego de ferramentas de IA, com modo de simulação, interface de terminal e trilha de auditoria sem conteúdo.
+    \item \textbf{Caracterização da lacuna:} a síntese da literatura em três eixos (interceptação em tempo real, independência de ferramenta e provedor, avaliação do impacto operacional) e o posicionamento do mecanismo nesse espaço.
+    \item \textbf{Especificação rastreável:} cinco perfis de usuários, 25 requisitos funcionais e 14 não funcionais com critérios de aceitação, matriz de rastreabilidade com os testes e registro de 12 decisões técnicas.
+    \item \textbf{Evidência de desempenho:} medições de latência e vazão do analisador para corpos de 1~KB a 5~MiB, que não são reportadas nos estudos revisados.
+    \item \textbf{Registro crítico de defeitos e limitações:} um catálogo de problemas, alguns de severidade alta, e a constatação de que testes escritos pelos próprios desenvolvedores não detectaram falhas de cobertura em padrões de detecção.
+\end{itemize}
+
+\section{Limitações}
+
+As limitações detalhadas na Seção~\ref{sec:res_limitacoes} condicionam todas as conclusões acima. As principais são o conjunto de teste sintético, a ausência de validação com usuários, a verificação em um único ambiente com destino simulado, a medição de latência restrita ao analisador, a cobertura de detecção limitada a credenciais de formato conhecido e a presença de defeitos de severidade alta ainda sem correção (P01, P02, P16 e P17).
+
+\section{Recomendações para Trabalhos Futuros}
+\label{sec:conc_futuros}
+
+Em ordem de prioridade:
+
+\begin{enumerate}
+    \item \textbf{Corrigir e consolidar.} Corrigir os defeitos P01, P02, P03 e P15 a P17, acompanhando cada correção de um teste de regressão, e ampliar a cobertura de testes do manipulador de requisições, da auditoria, da CA e do diagnóstico.
+    \item \textbf{Avaliar com rigor.} (i) Construir um corpus rotulado e calcular precisão, revocação e F1; (ii) medir a latência de ponta a ponta com ferramentas reais, sobre HTTPS, nas três plataformas; (iii) realizar a validação com desenvolvedores, com tarefas definidas e instrumento padronizado de usabilidade; (iv) comparar as respostas do LLM com e sem redação, para medir a perda de utilidade; (v) testar o comportamento sob carga e uso de memória.
+    \item \textbf{Ampliar a detecção.} Incorporar um estágio híbrido, com classificador contextual sobre os candidatos extraídos por padrões, em linha com \citeonline{rahman2025secret} e \citeonline{tsebak2025enhancing}, medindo seu custo de latência; adicionar padrões de dados pessoais; tratar outros tipos de conteúdo, respostas dos provedores e HTTP/2.
+    \item \textbf{Fortalecer a governança.} Proteger a integridade da trilha (encadeamento de \textit{hashes} ou assinatura), adotar armazenamento consultável embarcado, permitir a recarga de configuração, implementar o sistema de \textit{plugins} (RF25) e mapear as categorias de dados detectadas para normas como a LGPD e a ISO/IEC 27701.
+    \item \textbf{Fortalecer a fundamentação.} Ampliar a revisão para outras bases (como SciELO e anais da SBC), incluir fontes arbitradas sobre casos reais de vazamento e estudos sobre arquiteturas intermediárias.
+\end{enumerate}
+
+\section{Considerações Finais}
+
+O trabalho mostra que é viável interpor, entre o desenvolvedor e o provedor de IA, uma camada local que reduz a exposição de credenciais a um custo de análise muito baixo, sem alterar a ferramenta nem o provedor. Mostra também, e este é um resultado tão relevante quanto o primeiro, que a confiança nessa camada depende de avaliação em condições reais e de testes que não sejam escritos apenas para confirmar o que o código já faz. Nesse sentido, o GalileuCLI deve ser lido como uma base verificada em seu núcleo e um ponto de partida para a avaliação mais ampla descrita acima.

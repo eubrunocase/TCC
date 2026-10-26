@@ -23,7 +23,6 @@ Reallocated singl_function (elt_size=4) to 100 items from 50.
 Reallocated wiz_functions (elt_size=4) to 9000 items from 6000.
 Database file #1: abntex2-options.bib
 Database file #2: referenciasbibliograficas.bib
-Warning--I didn't find a database entry for "pfleeger2001principles"
 Reallocated singl_function (elt_size=4) to 100 items from 50.
 Reallocated glb_str_ptr (elt_size=4) to 20 items from 10.
 Reallocated global_strs (elt_size=200001) to 20 items from 10.
@@ -35,7 +34,7 @@ Reallocated glb_str_end (elt_size=4) to 20 items from 10.
 +---------------------------------------------------------+
 You've used 9 entries,
             6714 wiz_defined-function locations,
-            1260 strings with 11767 characters,
+            1259 strings with 11745 characters,
 and the built_in function-call counts, 8980 in all, are:
 = -- 825
 > -- 331
@@ -74,4 +73,3 @@ warning$ -- 0
 while$ -- 65
 width$ -- 0
 write$ -- 141
-(There was 1 warning)

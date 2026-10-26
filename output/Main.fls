@@ -480,6 +480,11 @@ OUTPUT output/capitulos/1_introducao.aux
 INPUT ./capitulos/1_introducao.tex
 INPUT ./capitulos/1_introducao.tex
 INPUT capitulos/1_introducao.tex
+INPUT /usr/local/texlive/2026basic/texmf-dist/fonts/tfm/public/lm/rm-lmr10.tfm
+INPUT /usr/local/texlive/2026basic/texmf-dist/fonts/tfm/public/lm/lmmi10.tfm
+INPUT /usr/local/texlive/2026basic/texmf-dist/fonts/tfm/public/lm/lmsy10.tfm
+INPUT /usr/local/texlive/2026basic/texmf-dist/fonts/tfm/public/amsfonts/symbols/msam10.tfm
+INPUT /usr/local/texlive/2026basic/texmf-dist/fonts/tfm/public/amsfonts/symbols/msbm10.tfm
 INPUT ./capitulos/3_fundamentacaoTeorica.tex
 INPUT ./capitulos/3_fundamentacaoTeorica.tex
 OUTPUT output/capitulos/3_fundamentacaoTeorica.aux
@@ -498,11 +503,6 @@ OUTPUT output/capitulos/requisitos.aux
 INPUT ./capitulos/requisitos.tex
 INPUT ./capitulos/requisitos.tex
 INPUT capitulos/requisitos.tex
-INPUT /usr/local/texlive/2026basic/texmf-dist/fonts/tfm/public/lm/rm-lmr10.tfm
-INPUT /usr/local/texlive/2026basic/texmf-dist/fonts/tfm/public/lm/lmmi10.tfm
-INPUT /usr/local/texlive/2026basic/texmf-dist/fonts/tfm/public/lm/lmsy10.tfm
-INPUT /usr/local/texlive/2026basic/texmf-dist/fonts/tfm/public/amsfonts/symbols/msam10.tfm
-INPUT /usr/local/texlive/2026basic/texmf-dist/fonts/tfm/public/amsfonts/symbols/msbm10.tfm
 INPUT ./figuras/casosdeuso.png
 INPUT ./figuras/casosdeuso.png
 INPUT ./capitulos/projeto.tex
@@ -551,6 +551,12 @@ OUTPUT output/capitulos/4_resultados.aux
 INPUT ./capitulos/4_resultados.tex
 INPUT ./capitulos/4_resultados.tex
 INPUT capitulos/4_resultados.tex
+INPUT ./figuras/terminal_galileu.png
+INPUT ./figuras/terminal_galileu.png
+INPUT ./figuras/terminal_galileu.png
+INPUT ./figuras/latencia_analisador.pdf
+INPUT ./figuras/latencia_analisador.pdf
+INPUT ./figuras/latencia_analisador.pdf
 INPUT ./capitulos/5_conclusoes.tex
 INPUT ./capitulos/5_conclusoes.tex
 OUTPUT output/capitulos/5_conclusoes.aux

@@ -1,2 +1,68 @@
 \chapter{Introdução}\label{chp:intro}
-Seu texto
+
+Assistentes de programação baseados em modelos de linguagem de grande escala (\textit{Large Language Models}, LLMs) tornaram-se parte do cotidiano do desenvolvimento de software. Integrados a editores, a ambientes de desenvolvimento e à linha de comando, eles completam código, sugerem refatorações e respondem a perguntas sobre o projeto. Para isso precisam de contexto: a cada interação, trechos de código, arquivos abertos, mensagens de erro e, com frequência, arquivos de configuração são enviados a provedores externos de inteligência artificial, fora do domínio de controle da organização que utiliza a ferramenta.
+
+Esse fluxo cria uma superfície de exposição de dados que os controles de segurança tradicionais tratam mal. O dado sensível não é subtraído por um atacante: é enviado, de forma legítima e muitas vezes inadvertida, pela própria ferramenta autorizada a um destino também autorizado (Capítulo~\ref{chp:fund}). Credenciais de acesso, chaves de API, \textit{tokens} e identificadores internos que acompanham o contexto passam, assim, a residir na infraestrutura de terceiros. Casos reais indicam a dimensão do problema: em 2023, engenheiros da \textit{Samsung} submeteram código-fonte proprietário a um assistente de IA generativa, o que resultou em três incidentes de vazamento em cerca de um mês e na proibição da ferramenta pela empresa; e relatórios recentes de monitoramento de segredos apontam volume crescente de credenciais expostas em repositórios públicos, inclusive em arquivos de configuração ligados a ferramentas de IA.
+
+Diante desse quadro, as organizações tendem a oscilar entre proibir o uso das ferramentas, abrindo mão de seus ganhos de produtividade, e aceitar o risco. Entre os dois extremos há espaço para mecanismos técnicos que permitam usar o assistente sem que o segredo chegue ao provedor. A literatura revisada neste trabalho oferece peças desse mecanismo, mas não o conjunto: há métodos de detecção de segredos e de dados pessoais avaliados sobre artefatos estáticos, técnicas de preservação de privacidade aplicadas ao treinamento ou à arquitetura interna do agente, e assistentes executados localmente que dispensam o provedor externo. Não foi identificado, entre os trabalhos analisados, um que combine a interceptação do tráfego em tempo real, a independência em relação à ferramenta e ao provedor, e a avaliação do impacto operacional da camada de proteção (Capítulo~\ref{chp:fund}). É nessa lacuna que este trabalho se situa.
+
+\section{Problema de Pesquisa}
+\label{sec:intro_problema}
+
+O problema que orienta este trabalho pode ser formulado da seguinte maneira: \textit{como impedir que dados sensíveis presentes no contexto enviado por ferramentas de desenvolvimento assistidas por LLM cheguem a provedores externos de IA, sem exigir a substituição da ferramenta nem do provedor e sem degradar de forma perceptível a experiência do desenvolvedor?}
+
+Esse problema se desdobra nas questões de pesquisa (\textit{Research Questions}, RQs) da Tabela~\ref{tab:rqs}, cada uma associada a uma das cadeias de busca da revisão sistemática descrita no Capítulo~\ref{chp:met}. As quatro primeiras são respondidas pela revisão da literatura (Capítulo~\ref{chp:fund}); a quinta é respondida, também, pela verificação experimental do mecanismo proposto (Capítulos~\ref{chp:test} e~\ref{chp:res}).
+
+\begin{table}[htb]
+\centering
+\caption{Questões de pesquisa}\label{tab:rqs}
+\small
+\begin{tabular}{|p{1.1cm}|p{9.3cm}|p{1.6cm}|p{2.6cm}|}
+\hline
+\textbf{ID} & \textbf{Questão} & \textbf{Cadeia} & \textbf{Respondida em} \\ \hline
+RQ1 & Que riscos de exposição de dados, código e privacidade o uso de assistentes de programação baseados em LLM introduz? & A & Cap.~\ref{chp:fund} \\ \hline
+RQ2 & Que técnicas de sanitização, redação e anonimização são empregadas para remover ou substituir informação sensível antes do envio ao modelo? & B & Cap.~\ref{chp:fund} \\ \hline
+RQ3 & Que arquiteturas intermediárias (\textit{proxies}, \textit{gateways}, \textit{middlewares}) são utilizadas para prevenir a perda de dados? & C & Cap.~\ref{chp:fund} \\ \hline
+RQ4 & Que métodos permitem detectar credenciais, segredos e dados pessoais em código e em ambientes de desenvolvimento? & D & Cap.~\ref{chp:fund} \\ \hline
+RQ5 & Qual é o impacto operacional (latência, utilidade, produtividade) de introduzir uma camada de proteção nesse fluxo? & E & Cap.~\ref{chp:fund}, \ref{chp:test} e~\ref{chp:res} \\ \hline
+\end{tabular}
+\fonte{Elaborado pela equipe (2026), a partir das cadeias de busca da Seção~\ref{sec:strings_busca}.}
+\end{table}
+
+\section{Justificativa}
+
+\textbf{Do ponto de vista prático}, o uso de assistentes de código já é decisão consolidada em muitas equipes, de modo que a alternativa de eliminar o provedor externo (como em assistentes locais) nem sempre está disponível. Uma camada de proteção que atue sobre o tráfego, sem alterar a ferramenta do desenvolvedor, reduz o custo de adoção e permite que a política de dados da organização seja aplicada, e não apenas declarada.
+
+\textbf{Do ponto de vista científico}, a revisão da literatura mostra que as abordagens existentes avaliam a detecção sobre artefatos estáticos ou atuam no treinamento do modelo, e que a latência introduzida por uma camada de proteção não é avaliada nos estudos analisados. O trabalho contribui ao propor um mecanismo que opera sobre o tráfego em trânsito e ao reportar medições do seu custo operacional.
+
+\textbf{Do ponto de vista social e de governança}, o mecanismo gera uma trilha de auditoria que registra o que foi detectado sem armazenar o conteúdo das requisições, o que oferece à organização evidência para acompanhar o uso das ferramentas de IA. Por ser distribuído como \textit{software} de código aberto, o resultado pode ser examinado, reproduzido e evoluído por terceiros.
+
+\section{Objetivos}
+\label{sec:intro_obj}
+
+\subsection{Objetivo Geral}
+
+Projetar, implementar e avaliar um mecanismo de \textit{proxy} intermediário, independente da ferramenta e do provedor, capaz de detectar e redigir dados sensíveis no tráfego HTTP enviado por ferramentas de desenvolvimento assistidas por LLM a provedores externos de IA, e avaliar o seu impacto operacional.
+
+\subsection{Objetivos Específicos}
+
+\begin{enumerate}
+    \item[\textbf{OE1.}] Identificar, por meio de revisão sistemática da literatura, os riscos de exposição de dados no uso de assistentes de programação baseados em LLM e as técnicas existentes de detecção, sanitização e proteção por arquiteturas intermediárias, caracterizando as lacunas a que o trabalho responde.
+    \item[\textbf{OE2.}] Levantar e especificar os requisitos funcionais e não funcionais do mecanismo, identificando seus usuários e definindo critérios de aceitação mensuráveis sempre que possível.
+    \item[\textbf{OE3.}] Projetar a arquitetura, o modelo de dados e as interfaces do mecanismo, documentando-os em diagramas.
+    \item[\textbf{OE4.}] Implementar o mecanismo de forma incremental e em código aberto, registrando as decisões técnicas e mantendo a documentação atualizada.
+    \item[\textbf{OE5.}] Verificar a eficácia da detecção e da redação, considerando a detecção dos formatos de credencial suportados, a ausência de falsos positivos nos casos de teste e a integridade das requisições encaminhadas.
+    \item[\textbf{OE6.}] Avaliar o impacto operacional do mecanismo, medindo a latência e a vazão da análise para corpos de requisição de diferentes tamanhos.
+\end{enumerate}
+
+\section{Delimitação do Escopo}
+
+O trabalho trata dos dados que saem da máquina do desenvolvedor em requisições HTTP(S) dirigidas a provedores de IA. A detecção baseia-se em padrões (expressões regulares e valores literais) voltados principalmente a credenciais de formato conhecido, configuráveis pelo usuário. Ficam fora do escopo: o treinamento ou o ajuste fino de modelos; a inspeção das respostas dos provedores; a classificação semântica de conteúdo e a detecção de código proprietário por similaridade; a avaliação da qualidade das respostas do LLM após a redação; e a demonstração de conformidade com normas específicas de proteção de dados. As consequências dessas delimitações são discutidas no Capítulo~\ref{chp:res}.
+
+\section{Procedimentos Metodológicos}
+
+Trata-se de pesquisa aplicada, de natureza tecnológica, composta por três frentes. A primeira é uma revisão sistemática da literatura, conduzida com cinco cadeias de busca na base IEEE Xplore e triada com apoio da ferramenta Parsifal, que resultou em oito trabalhos incluídos entre quinze trabalhos únicos analisados (Capítulos~\ref{chp:met} e~\ref{chp:fund}). A segunda é o desenvolvimento incremental do mecanismo, precedido do levantamento de requisitos e do projeto da solução e acompanhado do registro das decisões técnicas (Capítulos~\ref{chp:req} a~\ref{chp:dev}). A terceira é a verificação do mecanismo por testes automatizados, de integração e de desempenho (Capítulo~\ref{chp:test}), cujos resultados são analisados à luz dos objetivos no Capítulo~\ref{chp:res}.
+
+\section{Estrutura do Trabalho}
+
+Além desta introdução, o trabalho está organizado em oito capítulos. O Capítulo~\ref{chp:fund} apresenta a fundamentação teórica e os trabalhos relacionados. O Capítulo~\ref{chp:met} descreve a metodologia da revisão. Os Capítulos~\ref{chp:req}, \ref{chp:proj} e~\ref{chp:dev} documentam o levantamento de requisitos, o projeto e o desenvolvimento da solução. O Capítulo~\ref{chp:test} reúne o planejamento, a execução e os resultados dos testes. O Capítulo~\ref{chp:res} apresenta o produto, os resultados e sua discussão, a comparação com os objetivos e as limitações. O Capítulo~\ref{chp:conc} apresenta as conclusões, as contribuições e as recomendações para trabalhos futuros.

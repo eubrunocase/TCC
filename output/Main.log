@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999998 (TeX Live 2026) (preloaded format=xelatex 2026.10.14)  20 OCT 2026 18:06
+This is XeTeX, Version 3.141592653-2.6-0.999998 (TeX Live 2026) (preloaded format=xelatex 2026.10.14)  26 OCT 2026 19:59
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -1699,10 +1699,36 @@ LaTeX Font Warning: Font shape `TU/Arial(0)/m/sc' undefined
 
  (./capitulos/1_introducao.tex
 Cap\'{\i }tulo 1.
-) [17
+[17
 
 
 ]
+LaTeX Font Info:    External font `lmex10' loaded for size
+(Font)              <10.95> on input line 20.
+
+Underfull \hbox (badness 10000) in paragraph at lines 22--22
+[]|\TU/Arial(0)/b/n/10.95 Respondida
+ []
+
+
+Underfull \hbox (badness 1132) in paragraph at lines 27--27
+\TU/Arial(0)/m/n/10.95 dutividade) de introduzir uma camada de proteção
+ []
+
+
+Overfull \hbox (10.16667pt too wide) in paragraph at lines 20--29
+ [][] 
+ []
+
+Package babel Info: 'brazil' activates 'portuges' shorthands.
+(babel)             Reported on input line 37.
+[18]
+Overfull \hbox (36.1399pt too wide) in paragraph at lines 52--53
+[]\TU/Arial(0)/m/sc/12 Projetar a arquitetura, o modelo de dados e as interface
+s do mecanismo, documentando-
+ []
+
+[19]) [20]
 \openout2 = `capitulos/3_fundamentacaoTeorica.aux'.
 
  (./capitulos/3_fundamentacaoTeorica.tex
@@ -1714,7 +1740,7 @@ Overfull \hbox (3.89966pt too wide) in paragraph at lines 13--14
  GitHub\TU/Arial(0)/m/sc/12 .
  []
 
-[18
+[21
 
 
 
@@ -1724,9 +1750,7 @@ Overfull \hbox (1.21898pt too wide) in paragraph at lines 22--22
 []\TU/Arial(0)/b/n/17.28 Assistentes de Desenvolvimento (Code Assistants) 
  []
 
-Package babel Info: 'brazil' activates 'portuges' shorthands.
-(babel)             Reported on input line 27.
-[19] [20] [21] [22] [23]) [24]
+[22] [23] [24] [25] [26]) [27]
 \openout2 = `capitulos/2_metodologia.aux'.
 
  (./capitulos/2_metodologia.tex
@@ -1741,7 +1765,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 28--30
 
  []
 
-[25
+[28
 
 
 
@@ -1761,24 +1785,17 @@ Underfull \hbox (badness 10000) in paragraph at lines 67--69
 
  []
 
-) [26]
+) [29]
 \openout2 = `capitulos/requisitos.aux'.
 
  (./capitulos/requisitos.tex
 Cap\'{\i }tulo 4.
-[27
+[30
 
 
 
 
 ]
-
-LaTeX Warning: Reference `sec:test_usuarios' on page 28 undefined on input line
- 23.
-
-LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <10.95> on input line 29.
-
 Underfull \hbox (badness 1077) in paragraph at lines 31--31
 []|\TU/Arial(0)/b/n/10.95 Necessidades e motiva-
  []
@@ -1873,7 +1890,7 @@ Overfull \hbox (18.70258pt too wide) in paragraph at lines 29--38
  [][] 
  []
 
-[28]
+[31]
 Overfull \hbox (4.31772pt too wide) in paragraph at lines 54--54
 []|\TU/Arial(0)/b/n/10.95 Componente| 
  []
@@ -2091,9 +2108,9 @@ Overfull \hbox (23.9885pt too wide) in alignment at lines 58--84
  []
 
 
-ignored: Infinite glue shrinkage found in box being split [29]
+ignored: Infinite glue shrinkage found in box being split [32]
 ignored: Infinite glue shrinkage fo
-und in box being split [30]
+und in box being split [33]
 Underfull \hbox (badness 5417) in paragraph at lines 103--103
 []|\TU/Arial(0)/m/n/10.95 Teste de latência;
  []
@@ -2203,8 +2220,8 @@ Underfull \hbox (badness 6961) in paragraph at lines 116--116
 \TU/Arial(0)/m/n/10.95 licença de código aberto (Apa-
  []
 
-[31]
-ignored: Infinite glue shrinkage found in box being split [32] [33]
+[34]
+ignored: Infinite glue shrinkage found in box being split [35] [36]
 File: figuras/casosdeuso.png Graphic file (type bmp)
 <figuras/casosdeuso.png>
 
@@ -2252,12 +2269,7 @@ Overfull \hbox (10.16624pt too wide) in paragraph at lines 146--160
  [][] 
  []
 
-[34]
-
-LaTeX Warning: Reference `sec:test_usuarios' on page 35 undefined on input line
- 169.
-
-) [35]
+[37]) [38]
 \openout2 = `capitulos/projeto.aux'.
 
  (./capitulos/projeto.tex
@@ -2289,7 +2301,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 44--44
 []|\TU/Arial(0)/m/n/10.95 RF11, RF12,
  []
 
-[36
+[39
 
 
 
@@ -2297,12 +2309,12 @@ Underfull \hbox (badness 10000) in paragraph at lines 44--44
 ]
 File: figuras/sequencia.png Graphic file (type bmp)
 <figuras/sequencia.png>
- [37]
+ [40]
 File: figuras/fluxo_a.png Graphic file (type bmp)
 <figuras/fluxo_a.png>
 File: figuras/fluxo_b.png Graphic file (type bmp)
 <figuras/fluxo_b.png>
- [38] [39] [40]
+ [41] [42] [43]
 File: figuras/dados_config.png Graphic file (type bmp)
 <figuras/dados_config.png>
 
@@ -2315,7 +2327,7 @@ Overfull \hbox (9.816pt too wide) in paragraph at lines 123--123
 []|\TU/lmtt/m/n/10.95 analyzer.custom_patter| 
  []
 
-[41]
+[44]
 File: figuras/dados_audit.png Graphic file (type bmp)
 <figuras/dados_audit.png>
 
@@ -2354,23 +2366,23 @@ Underfull \hbox (badness 10000) in paragraph at lines 168--168
  []
 
 
-ignored: Infinite glue shrinkage found in box being split [42] (/usr/local/texlive/2026b
+ignored: Infinite glue shrinkage found in box being split [45] (/usr/local/texlive/2026b
 asic/texmf-dist/tex/latex/listings/lstlang1.sty
 File: lstlang1.sty 2025/11/14 1.11b listings language file
 )
 Package hyperref Info: bookmark level for unknown lstlisting defaults to 0 on i
 nput line 181.
-[43] [44] [45]
+[46] [47] [48]
 File: figuras/classes_a.png Graphic file (type bmp)
 <figuras/classes_a.png>
 File: figuras/classes_b.png Graphic file (type bmp)
 <figuras/classes_b.png>
-) [46] [47]
+) [49] [50]
 \openout2 = `capitulos/desenvolvimento.aux'.
 
  (./capitulos/desenvolvimento.tex
 Cap\'{\i }tulo 6.
-[48
+[51
 
 
 
@@ -2653,8 +2665,8 @@ Underfull \hbox (badness 3792) in paragraph at lines 83--83
 []|\TU/Arial(0)/m/n/10.95 137478e, fae-
  []
 
-[49]
-ignored: Infinite glue shrinkage found in box being split [50] [51]
+[52]
+ignored: Infinite glue shrinkage found in box being split [53] [54]
 Underfull \hbox (badness 10000) in paragraph at lines 102--102
 []|
  []
@@ -3016,18 +3028,14 @@ Underfull \hbox (badness 10000) in paragraph at lines 138--138
  []
 
 
-ignored: Infinite glue shrinkage found in box being split [52]
+ignored: Infinite glue shrinkage found in box being split [55]
 ignored: Infinite glue shrinkage fo
-und in box being split [53] [54]) [55]
+und in box being split [56] [57]) [58]
 \openout2 = `capitulos/testes.aux'.
 
  (./capitulos/testes.tex
 Cap\'{\i }tulo 7.
-
-LaTeX Warning: Reference `sec:test_usuarios' on page 56 undefined on input line
- 3.
-
-[56
+[59
 
 
 
@@ -3258,7 +3266,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 86--86
 []|\TU/Arial(0)/m/n/10.95 RF24,
  []
 
-[57] [58]
+[60] [61]
 Underfull \hbox (badness 10000) in paragraph at lines 122--122
 []|\TU/Arial(0)/m/n/10.95 Conforme o
  []
@@ -3288,7 +3296,7 @@ Underfull \hbox (badness 4316) in paragraph at lines 173--173
 \TU/Arial(0)/m/n/10.95 CT-I01 a I10;
  []
 
-[59]
+[62]
 Overfull \hbox (10.06427pt too wide) in paragraph at lines 187--187
 []|\TU/Arial(0)/b/n/10.95 Severidade| 
  []
@@ -3478,7 +3486,7 @@ Overfull \hbox (2.24529pt too wide) in alignment at lines 191--197
  [] [] [] [] [] [] 
  []
 
-[60]
+[63]
 Underfull \hbox (badness 10000) in paragraph at lines 213--213
 []|\TU/Arial(0)/m/n/10.95 RF02,
  []
@@ -3508,66 +3516,401 @@ Underfull \hbox (badness 4805) in paragraph at lines 221--221
 []|\TU/Arial(0)/m/n/10.95 CT-A06, CT-A07, \TU/Arial(0)/m/it/10.95 bench-
  []
 
-) [61] [62] [63] [64]
+) [64] [65] [66] [67]
 \openout2 = `capitulos/4_resultados.aux'.
 
  (./capitulos/4_resultados.tex
 Cap\'{\i }tulo 8.
 
-LaTeX Warning: Citation `pfleeger2001principles' on page 65 undefined on input 
-line 23.
-
-
-Underfull \hbox (badness 5533) in paragraph at lines 56--56
-\TU/Arial(0)/b/n/12 LHO AUTOR ANO
+Underfull \hbox (badness 10000) in paragraph at lines 20--20
+[]|\TU/Arial(0)/m/n/10.95 Linguagem e di-
  []
 
-
-Underfull \hbox (badness 10000) in paragraph at lines 56--56
-[]|\TU/Arial(0)/b/n/12 PRINCIPAIS RE-
- []
-
-
-Overfull \hbox (49.99994pt too wide) in paragraph at lines 54--119
- [][] 
- []
-
-) [65
+[68
 
 
 
 
 ]
+File: figuras/terminal_galileu.png Graphic file (type bmp)
+<figuras/terminal_galileu.png>
+ [69] [70]
+File: figuras/latencia_analisador.pdf Graphic file (type pdf)
+<use figuras/latencia_analisador.pdf>
+ [71]
+Underfull \hbox (badness 1824) in paragraph at lines 94--94
+[]|\TU/Arial(0)/m/n/10.95 RF01 (apenas HTTP com destino simulado, sem
+ []
+
+
+Underfull \hbox (badness 1163) in paragraph at lines 96--96
+[]|\TU/Arial(0)/m/n/10.95 Sem evidência na ro-
+ []
+
+
+Underfull \hbox (badness 5022) in paragraph at lines 115--115
+[]|\TU/Arial(0)/m/n/10.95 Atendido (inspe-
+ []
+
+
+Underfull \hbox (badness 5022) in paragraph at lines 125--125
+[]|\TU/Arial(0)/m/n/10.95 Atendido (inspe-
+ []
+
+
+ignored: Infinite glue shrinkage found in box being split [72]
+Overfull \hbox (12.90927pt too wide) in paragraph at lines 143--143
+[]|\TU/Arial(0)/b/n/10.95 Severidade| 
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 144--144
+[]|\TU/Arial(0)/m/n/10.95 O padrão \TU/lmtt/m/n/10.95 discord_token \TU/Arial(0
+)/m/n/10.95 tem a
+ []
+
+
+Underfull \hbox (badness 3668) in paragraph at lines 144--144
+\TU/Arial(0)/m/n/10.95 mesma expressão regular do padrão
+ []
+
+
+Underfull \hbox (badness 3849) in paragraph at lines 144--144
+\TU/lmtt/m/n/10.95 slack_token \TU/Arial(0)/m/n/10.95 (\TU/lmtt/m/n/10.95 xox[b
+aprs]-\TU/Arial(0)/m/n/10.95 ). Tokens
+ []
+
+
+Underfull \hbox (badness 2343) in paragraph at lines 144--144
+\TU/Arial(0)/m/n/10.95 são reconhecidos; um comentário do
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 145--145
+[]|\TU/Arial(0)/m/n/10.95 Substituir por detecção
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 145--145
+\TU/Arial(0)/m/n/10.95 baseada em contexto
+ []
+
+
+Underfull \hbox (badness 6428) in paragraph at lines 145--145
+\TU/Arial(0)/m/n/10.95 caracteres associado ao
+ []
+
+
+Overfull \hbox (1.63075pt too wide) in alignment at lines 162--166
+ [] [] [] [] 
+ []
+
+
+Overfull \hbox (1.63075pt too wide) in alignment at lines 166--169
+ [] [] [] [] 
+ []
+
+
+Underfull \hbox (badness 1789) in paragraph at lines 170--170
+[]|\TU/Arial(0)/m/n/10.95 Atingido parci-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 170--170
+[]|\TU/Arial(0)/m/n/10.95 Base única
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 170--170
+\TU/Arial(0)/m/n/10.95 casos reais
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 170--170
+\TU/Arial(0)/m/n/10.95 sem fonte
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 170--170
+\TU/Arial(0)/m/n/10.95 referência
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 171--171
+[]|\TU/Arial(0)/m/n/10.95 Perfis não
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 171--171
+\TU/Arial(0)/m/n/10.95 validados
+ []
+
+
+Underfull \hbox (badness 6173) in paragraph at lines 171--171
+\TU/Arial(0)/m/n/10.95 com usuários
+ []
+
+
+Underfull \hbox (badness 1057) in paragraph at lines 173--173
+\TU/Arial(0)/m/n/10.95 64 \TU/Arial(0)/m/it/10.95 commits \TU/Arial(0)/m/n/10.9
+5 em nove incrementos; 12 deci-
+ []
+
+
+Underfull \hbox (badness 1789) in paragraph at lines 174--174
+[]|\TU/Arial(0)/m/n/10.95 Atingido parci-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 174--174
+[]|\TU/Arial(0)/m/n/10.95 Dados sinté-
+ []
+
+
+Underfull \hbox (badness 3088) in paragraph at lines 174--174
+\TU/Arial(0)/m/n/10.95 nove padrões
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 174--174
+\TU/Arial(0)/m/n/10.95 camento em
+ []
+
+
+Underfull \hbox (badness 1789) in paragraph at lines 175--175
+[]|\TU/Arial(0)/m/n/10.95 Atingido parci-
+ []
+
+
+Underfull \hbox (badness 1320) in paragraph at lines 175--175
+\TU/Arial(0)/m/n/10.95 lisador; latên-
+ []
+
+
+Underfull \hbox (badness 5345) in paragraph at lines 175--175
+\TU/Arial(0)/m/n/10.95 cia de ponta
+ []
+
+
+Overfull \hbox (1.63075pt too wide) in alignment at lines 169--176
+ [] [] [] [] 
+ []
+
+[73]
+ignored: Infinite glue shrinkage found in box being split [74] [75] [76] [77]
+Overfull \hbox (13.01169pt too wide) in alignment at lines 223--227
+ [] [] [] [] 
+ []
+
+
+Overfull \hbox (13.01169pt too wide) in alignment at lines 227--230
+ [] [] [] [] 
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 231--231
+[]|\TU/Arial(0)/m/n/10.95 Mede conformidade,
+ []
+
+
+Underfull \hbox (badness 5008) in paragraph at lines 231--231
+\TU/Arial(0)/m/n/10.95 não precisão e revo-
+ []
+
+
+Underfull \hbox (badness 1303) in paragraph at lines 231--231
+\TU/Arial(0)/m/n/10.95 cação em tráfego real
+ []
+
+
+Underfull \hbox (badness 1137) in paragraph at lines 231--231
+[]|\TU/Arial(0)/m/n/10.95 Corpus rotulado e
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 231--231
+\TU/Arial(0)/m/n/10.95 cálculo de preci-
+ []
+
+
+Underfull \hbox (badness 2884) in paragraph at lines 231--231
+\TU/Arial(0)/m/n/10.95 são, revocação e
+ []
+
+
+Underfull \hbox (badness 3942) in paragraph at lines 232--232
+[]|\TU/Arial(0)/m/n/10.95 Usabilidade, aceitação
+ []
+
+
+Underfull \hbox (badness 1087) in paragraph at lines 232--232
+\TU/Arial(0)/m/n/10.95 e utilidade não avalia-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 232--232
+[]|\TU/Arial(0)/m/n/10.95 Estudo com de-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 232--232
+\TU/Arial(0)/m/n/10.95 senvolvedores
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 233--233
+[]|\TU/Arial(0)/m/n/10.95 Dez requisitos funci-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 233--233
+\TU/Arial(0)/m/n/10.95 onais sem evidência;
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 233--233
+[]|\TU/Arial(0)/m/n/10.95 Execução do ro-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 233--233
+\TU/Arial(0)/m/n/10.95 teiro manual em
+ []
+
+
+Underfull \hbox (badness 2846) in paragraph at lines 235--235
+[]|\TU/Arial(0)/m/n/10.95 Testes de regres-
+ []
+
+
+Underfull \hbox (badness 4391) in paragraph at lines 236--236
+[]|\TU/Arial(0)/m/n/10.95 OE1 atendido parcial-
+ []
+
+
+Underfull \hbox (badness 6078) in paragraph at lines 236--236
+\TU/Arial(0)/m/n/10.95 vernança menos sus-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 236--236
+[]|\TU/Arial(0)/m/n/10.95 Ampliar bases e
+ []
+
+
+Underfull \hbox (badness 4416) in paragraph at lines 237--237
+[]|\TU/Arial(0)/m/n/10.95 Cobertura efetiva me-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 238--238
+[]|\TU/Arial(0)/m/n/10.95 Segredos fora desse
+ []
+
+
+Underfull \hbox (badness 3118) in paragraph at lines 238--238
+\TU/Arial(0)/m/n/10.95 perfil (CT-I03, CT-I09)
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 238--238
+[]|\TU/Arial(0)/m/n/10.95 Ampliar tipos de
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 238--238
+\TU/Arial(0)/m/n/10.95 conteúdo; tratar
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 238--238
+\TU/Arial(0)/m/n/10.95 corpos grandes
+ []
+
+
+Underfull \hbox (badness 1308) in paragraph at lines 239--239
+\TU/Arial(0)/m/n/10.95 confiável; clientes com fixação de
+ []
+
+
+Underfull \hbox (badness 2103) in paragraph at lines 239--239
+\TU/Arial(0)/m/n/10.95 veis ficam sem prote-
+ []
+
+
+Underfull \hbox (badness 2717) in paragraph at lines 239--239
+[]|\TU/Arial(0)/m/n/10.95 Documentar; ava-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 240--240
+[]|\TU/Arial(0)/m/n/10.95 Defeitos de severidade alta em
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 240--240
+[]|\TU/Arial(0)/m/n/10.95 Integridade da trilha,
+ []
+
+
+Underfull \hbox (badness 6078) in paragraph at lines 240--240
+\TU/Arial(0)/m/n/10.95 das requisições gran-
+ []
+
+
+Underfull \hbox (badness 1681) in paragraph at lines 240--240
+\TU/Arial(0)/m/n/10.95 des e a eficácia para
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 241--241
+\TU/Arial(0)/m/n/10.95 (P08); sem sistema de \TU/Arial(0)/m/it/10.95 plugins
+ []
+
+
+Underfull \hbox (badness 7685) in paragraph at lines 241--241
+[]|\TU/Arial(0)/m/n/10.95 Recarga de con-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 241--241
+\TU/Arial(0)/m/n/10.95 figuração; banco
+ []
+
+
+Underfull \hbox (badness 3568) in paragraph at lines 242--242
+[]|\TU/Arial(0)/m/n/10.95 Encadeamento de
+ []
+
+
+Overfull \hbox (13.01169pt too wide) in alignment at lines 230--243
+ [] [] [] [] 
+ []
+
+
+ignored: Infinite glue shrinkage found in box being split [78]) [79]
 \openout2 = `capitulos/5_conclusoes.aux'.
 
  (./capitulos/5_conclusoes.tex
 Cap\'{\i }tulo 9.
-
-Package blindtext Warning: brazil not defined, using English instead.
-(blindtext)                 on input line 4.
-
-
-Package blindtext Warning: brazil not defined, using English instead.
-(blindtext)                 on input line 10.
-
-) [66
+[80
 
 
 
 
-] (output/Main.bbl (output/Main.brf)
+] [81]) [82] (output/Main.bbl (output/Main.brf)
 \tf@brf=\write6
 \openout6 = `Main.brf'.
 
 
 bibitemlist
-) [67
+) [83
 
 
 
 ]
 Ap\^endice A.
-[68
+[84
 
 ]
 \tf@lof=\write7
@@ -3595,21 +3938,18 @@ L3 programming layer <2020/03/25>
 
 LaTeX Font Warning: Some font shapes were not available, defaults substituted.
 
-
-LaTeX Warning: There were undefined references.
-
 Package rerunfilecheck Info: File `Main.brf' has not changed.
-(rerunfilecheck)             Checksum: 0F62C32D826A8BF2A195BF58CADBDAAC;2113.
+(rerunfilecheck)             Checksum: DC38640895FAA2E888C1634BE2CF0AD5;2467.
  )
 (\end occurred when \ifx on line 15 was incomplete)
 (\end occurred when \ifx on line 6 was incomplete) 
 Here is how much of TeX's memory you used:
- 36217 strings out of 469709
- 709917 string characters out of 5466022
- 1702712 words of memory out of 5000000
- 64104 multiletter control sequences out of 15000+600000
+ 36320 strings out of 469709
+ 711473 string characters out of 5466022
+ 1704232 words of memory out of 5000000
+ 64205 multiletter control sequences out of 15000+600000
  648315 words of font info for 99 fonts, out of 8000000 for 9000
  319 hyphenation exceptions out of 8191
  99i,13n,107p,1361b,2119s stack positions out of 10000i,1000n,20000p,200000b,200000s
 
-Output written on output/Main.xdv (69 pages, 1203672 bytes).
+Output written on output/Main.xdv (85 pages, 1667268 bytes).

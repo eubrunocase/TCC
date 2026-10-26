@@ -1,23 +1,29 @@
 \babel@toc {brazil}{}\relax 
 \babel@toc {brazil}{}\relax 
-\contentsline {table}{\numberline {1}{\ignorespaces Perfis de usuários e partes interessadas}}{28}{table.caption.15}%
-\contentsline {table}{\numberline {2}{\ignorespaces Requisitos funcionais}}{29}{table.4.2}%
-\contentsline {table}{\numberline {3}{\ignorespaces Requisitos não funcionais}}{32}{table.4.3}%
-\contentsline {table}{\numberline {4}{\ignorespaces Resumo dos casos de uso}}{35}{table.caption.17}%
-\contentsline {table}{\numberline {5}{\ignorespaces Componentes da arquitetura}}{38}{table.caption.19}%
-\contentsline {table}{\numberline {7}{\ignorespaces Dicionário de dados da entrada de auditoria (campos JSON)}}{42}{table.5.7}%
-\contentsline {table}{\numberline {6}{\ignorespaces Dicionário de dados da configuração (arquivo YAML)}}{44}{table.caption.24}%
-\contentsline {table}{\numberline {8}{\ignorespaces Interface de linha de comando}}{45}{table.caption.26}%
-\contentsline {table}{\numberline {9}{\ignorespaces Ambiente e ferramentas de desenvolvimento}}{48}{table.caption.29}%
-\contentsline {table}{\numberline {10}{\ignorespaces Incrementos de desenvolvimento}}{50}{table.6.10}%
-\contentsline {table}{\numberline {11}{\ignorespaces Registro de reuniões de acompanhamento e orientações incorporadas}}{52}{table.caption.31}%
-\contentsline {table}{\numberline {12}{\ignorespaces Registro de decisões técnicas}}{52}{table.6.12}%
-\contentsline {table}{\numberline {13}{\ignorespaces Documentação mantida no repositório}}{55}{table.caption.32}%
-\contentsline {table}{\numberline {14}{\ignorespaces Suítes de teste automatizadas}}{58}{table.caption.33}%
-\contentsline {table}{\numberline {19}{\ignorespaces Problemas identificados}}{60}{table.7.19}%
-\contentsline {table}{\numberline {15}{\ignorespaces Casos de teste de integração e de sistema}}{62}{table.caption.34}%
-\contentsline {table}{\numberline {16}{\ignorespaces Resultados dos casos de integração (14/10/2026)}}{63}{table.caption.35}%
-\contentsline {table}{\numberline {17}{\ignorespaces Latência do analisador por tamanho de corpo (ambiente de verificação)}}{63}{table.caption.36}%
-\contentsline {table}{\numberline {18}{\ignorespaces Modelo de registro de execução de testes}}{63}{table.caption.37}%
-\contentsline {table}{\numberline {20}{\ignorespaces Matriz de rastreabilidade requisitos--testes}}{64}{table.caption.38}%
-\contentsline {table}{\numberline {21}{\ignorespaces Caracterização das publicações selecionadas}}{65}{table.caption.39}%
+\contentsline {table}{\numberline {1}{\ignorespaces Questões de pesquisa}}{18}{table.caption.15}%
+\contentsline {table}{\numberline {2}{\ignorespaces Perfis de usuários e partes interessadas}}{31}{table.caption.16}%
+\contentsline {table}{\numberline {3}{\ignorespaces Requisitos funcionais}}{32}{table.4.3}%
+\contentsline {table}{\numberline {4}{\ignorespaces Requisitos não funcionais}}{35}{table.4.4}%
+\contentsline {table}{\numberline {5}{\ignorespaces Resumo dos casos de uso}}{38}{table.caption.18}%
+\contentsline {table}{\numberline {6}{\ignorespaces Componentes da arquitetura}}{41}{table.caption.20}%
+\contentsline {table}{\numberline {8}{\ignorespaces Dicionário de dados da entrada de auditoria (campos JSON)}}{45}{table.5.8}%
+\contentsline {table}{\numberline {7}{\ignorespaces Dicionário de dados da configuração (arquivo YAML)}}{47}{table.caption.25}%
+\contentsline {table}{\numberline {9}{\ignorespaces Interface de linha de comando}}{48}{table.caption.27}%
+\contentsline {table}{\numberline {10}{\ignorespaces Ambiente e ferramentas de desenvolvimento}}{51}{table.caption.30}%
+\contentsline {table}{\numberline {11}{\ignorespaces Incrementos de desenvolvimento}}{53}{table.6.11}%
+\contentsline {table}{\numberline {12}{\ignorespaces Registro de reuniões de acompanhamento e orientações incorporadas}}{55}{table.caption.32}%
+\contentsline {table}{\numberline {13}{\ignorespaces Registro de decisões técnicas}}{55}{table.6.13}%
+\contentsline {table}{\numberline {14}{\ignorespaces Documentação mantida no repositório}}{58}{table.caption.33}%
+\contentsline {table}{\numberline {15}{\ignorespaces Suítes de teste automatizadas}}{61}{table.caption.34}%
+\contentsline {table}{\numberline {20}{\ignorespaces Problemas identificados}}{63}{table.7.20}%
+\contentsline {table}{\numberline {16}{\ignorespaces Casos de teste de integração e de sistema}}{65}{table.caption.35}%
+\contentsline {table}{\numberline {17}{\ignorespaces Resultados dos casos de integração (14/10/2026)}}{66}{table.caption.36}%
+\contentsline {table}{\numberline {18}{\ignorespaces Latência do analisador por tamanho de corpo (ambiente de verificação)}}{66}{table.caption.37}%
+\contentsline {table}{\numberline {19}{\ignorespaces Modelo de registro de execução de testes}}{66}{table.caption.38}%
+\contentsline {table}{\numberline {21}{\ignorespaces Matriz de rastreabilidade requisitos--testes}}{67}{table.caption.39}%
+\contentsline {table}{\numberline {22}{\ignorespaces Ficha técnica do GalileuCLI}}{68}{table.caption.40}%
+\contentsline {table}{\numberline {23}{\ignorespaces Situação de verificação dos requisitos funcionais}}{72}{table.caption.43}%
+\contentsline {table}{\numberline {24}{\ignorespaces Situação de verificação dos requisitos não funcionais}}{72}{table.8.24}%
+\contentsline {table}{\numberline {25}{\ignorespaces Achados adicionais da revisão do código (\textit {commit} faebae9)}}{74}{table.caption.44}%
+\contentsline {table}{\numberline {26}{\ignorespaces Atendimento dos objetivos específicos}}{74}{table.8.26}%
+\contentsline {table}{\numberline {27}{\ignorespaces Limitações do estudo e do produto}}{78}{table.8.27}%

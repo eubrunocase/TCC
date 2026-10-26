@@ -1,122 +1,245 @@
-\chapter{Experimento e Coleta de Dados}\label{chp:exp}
+\chapter{Resultados e Discussão}\label{chp:res}
 
-Esta seção descreve o experimento e o processo de coleta de dados..... 
+Este capítulo apresenta o produto resultante do trabalho, descreve os resultados obtidos na verificação (Capítulo~\ref{chp:test}), compara-os com os objetivos definidos no Capítulo~\ref{chp:intro}, discute-os criticamente e registra as limitações do estudo. Uma advertência de escopo orienta a leitura: os resultados são de \textit{verificação do artefato}, obtidos em 14 de outubro de 2026 sobre o \textit{commit} faebae9, em ambiente Linux e com destino simulado. Eles não incluem validação com usuários nem execução com ferramentas de IA reais sobre HTTPS (Seção~\ref{sec:test_usuarios}), o que condiciona as conclusões da Seção~\ref{sec:res_comparacao} e do Capítulo~\ref{chp:conc}.
 
-\section{Descrição do Experimento}
+\section{Apresentação do Produto}
+\label{sec:res_produto}
 
-\section{Processo de coleta de dados}
+O mecanismo especificado e projetado nos Capítulos~\ref{chp:req} e~\ref{chp:proj}, descrito até aqui sem nome, conforme a orientação registrada na Tabela~\ref{tab:reunioes}, é implementado pelo \textbf{GalileuCLI}: uma ferramenta de linha de comando, de código aberto, que atua como \textit{proxy} entre as ferramentas de desenvolvimento assistidas por LLM e os provedores externos de IA, detectando e redigindo dados sensíveis no tráfego de saída. O executável chama-se \texttt{galileu}. A Tabela~\ref{tab:ficha} resume suas características.
 
-\section{Resultados Obtidos}
-
-\textbf{ATENÇÃO}
-%
-%SSDDSDFSFDF
-%SFSDFDFFSF
-%SFFFSDFF
-%
-%
-
-\section{Survey}
-
-Nesta etapa, foi aplicado um \textit{survey} que foi elaborado questões semi-estruturadas. Algumas destas questões, ficaram em aberto, de forma proposital para permitir que os entrevistados pudessem falar sobre o assunto da pesquisa, de uma forma mais livre, sem ficar limitados às alternativas das questões. 
-
-O \textit{survey} seguiu as recomendações de análise de Kitchenham e Pfleeger~\cite{pfleeger2001principles}.
-
-O objetivo de pesquisa do estudo foi:
-
-\begin{enumerate}
-    \item q1
-    \item q2
-\end{enumerate}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-...autor, ano de publicação, título do trabalho, objetivo, metodologia aplicada, principais resultados (Tabela 1).
-
-\begin{table}[htbp] 
+\begin{table}[htb]
 \centering
-\caption{Caracterização das publicações selecionadas} \label{tabela-frameworks}
-\begin{tabular}{|p{4cm}|p{4cm}|p{4cm}|p{4cm}|}
+\caption{Ficha técnica do GalileuCLI}\label{tab:ficha}
+\small
+\begin{tabular}{|p{3.4cm}|p{11.2cm}|}
 \hline
-\textbf{TÍTULO DO TRABALHO AUTOR ANO DE PUBLICAÇÃO} & \textbf{OBJETIVO} & \textbf{METODOLOGIA} & \textbf{PRINCIPAIS RESULTADOS}\\ \hline 
-
-Titulo
-&
-Objetivo
-&
-Estudo de campo.
-&
-Resultado.
-\\ \hline	
-Titulo
-
-&
-Objetivo
-
-& 
-Revisão de
-literatura.
-
-& 
-Resultado.
-
-\\ \hline
-Titulo
-
-& 
-Objetivo
-
-& 
-Estudo de campo.
-& 
-Resultado.
-
-\\ \hline
-Titulo
-
-& 
-Objetivo
-
-& 
-Estudo de campo. 
-& 
-Resultado.
-
-\\ \hline
-Titulo
-& 
-Objetivo
-& 
-Estudo de campo. 
-& 
-Resultado.
-\\ \hline
-Titulo
-
-& 
-Objetivo
-& 
-Estudo de campo. 
-& 
-Resultado.
-\\ \hline
+\textbf{Item} & \textbf{Descrição} \\ \hline
+Finalidade & \textit{Proxy} de segurança e governança que detecta e redige dados sensíveis em requisições enviadas a provedores de LLM, com trilha de auditoria. \\ \hline
+Repositório & Público, no GitHub: \url{https://github.com/eubrunocase/GalileuCLI} (acesso em 26 out. 2026). \\ \hline
+Versão & Última \textit{release} publicada: v1.0.1. A verificação do Capítulo~\ref{chp:test} foi feita sobre o \textit{commit} faebae9, dois \textit{commits} posteriores a essa \textit{release}. \\ \hline
+Linguagem e dimensão & Go; cerca de 3.600 linhas de código de produção e 1.300 de testes; 64 \textit{commits} entre 16/04 e 17/07/2026 (Seção~\ref{sec:dev_incrementos}). \\ \hline
+Plataformas & macOS (Intel e Apple Silicon), Linux (amd64) e Windows (amd64). \\ \hline
+Distribuição & Binários de \textit{release} com \textit{checksums} SHA-256; Homebrew (macOS e Linux); \textit{script} PowerShell (Windows). \\ \hline
+Licença & Apache~2.0. \\ \hline
 \end{tabular}
+\fonte{Elaborado pela equipe (2026), a partir do repositório do projeto.}
 \end{table}
 
-Fonte:dados da pesquisa (2022).
+\subsection{Como o produto é usado}
 
+O fluxo de uso previsto tem cinco passos. O usuário instala o binário (por exemplo, com o Homebrew) e executa o diagnóstico do ambiente (\texttt{galileu doctor}). Em seguida, inicia o \textit{proxy}, com ou sem a interface de terminal (\texttt{galileu --tui}); na primeira execução, o produto gera a autoridade certificadora local e tenta instalá-la no sistema operacional, o que exige privilégios. O terceiro passo é apontar a ferramenta de IA para o \textit{proxy}, que escuta por padrão na porta 9000. A partir daí o desenvolvedor trabalha normalmente: cada requisição de IA é analisada e as credenciais reconhecidas são substituídas pelo marcador \texttt{[REDACTED\_BY\_GALILEU]} antes do encaminhamento ao provedor. Por fim, o responsável pela governança consulta o arquivo de auditoria. O modo \texttt{--dry-run} permite executar todo o fluxo apenas detectando e registrando, sem alterar as requisições, o que serve para calibrar os padrões antes de habilitar a redação.
+
+A Figura~\ref{fig:terminal} mostra a inicialização do produto no terminal. A Listagem~\ref{lst:exemplo} ilustra o efeito sobre uma requisição, construída a partir do comportamento verificado no caso CT-I01 (Tabela~\ref{tab:res_int}), com uma chave fictícia; a Listagem~\ref{lst:audit} mostra o registro de auditoria correspondente, com valores ilustrativos e campos selecionados, em que o conteúdo da requisição não aparece.
+
+\begin{figure}[htb]
+\centering
+\caption{Inicialização do GalileuCLI no terminal}\label{fig:terminal}
+\includegraphics[width=0.78\textwidth]{figuras/terminal_galileu.png}
+\fonte{Elaborado pela equipe (2026), a partir da execução do produto em macOS.}
+\end{figure}
+
+\begin{lstlisting}[basicstyle=\ttfamily\scriptsize, frame=single, caption={Efeito da redação sobre uma requisição (exemplo ilustrativo)}, label={lst:exemplo}, captionpos=t, breaklines=true]
+Antes (enviado pela ferramenta):
+{"model":"modelo-exemplo","messages":[{"role":"user",
+ "content":"Corrija o erro. OPENAI_API_KEY=sk-EXEMPLO0000000000000000FICTICIO"}]}
+
+Depois (encaminhado ao provedor):
+{"model":"modelo-exemplo","messages":[{"role":"user",
+ "content":"Corrija o erro. OPENAI_API_KEY=[REDACTED_BY_GALILEU]"}]}
+\end{lstlisting}
+
+\begin{lstlisting}[basicstyle=\ttfamily\scriptsize, frame=single, caption={Registro de auditoria correspondente (campos selecionados, valores ilustrativos)}, label={lst:audit}, captionpos=t, breaklines=true]
+{"timestamp":"2026-10-14T15:02:11Z","request_id":"a1b2c3","host":"api.openai.com",
+ "provider":"openai","redacted":true,"pattern_count":1,
+ "detected_patterns":["openai_key"],"message_count":1,
+ "request_body_size_bytes":142,"analysis_duration_ms":0,"proxy_error":false}
+\end{lstlisting}
+
+A documentação do repositório demonstra a compatibilidade com diversas ferramentas de IA entre elas OpenCode, Claude Code, Cursor, Windsurf, GitHub Copilot e Gemini CLI, com o modo \textit{passive} recomendado para as que acessam vários \textit{hosts}, e inclui uma demonstração com uma dessas ferramentas(Opencode).
+
+\section{Resultados Obtidos}
+\label{sec:res_resultados}
+
+\subsection{Detecção e redação}
+
+O pacote central do produto executou 44 testes de primeiro nível e 52 subtestes, todos aprovados, com cobertura de 31,8\% das instruções; a análise estática (\texttt{go vet}) não emitiu avisos e o detector de corridas de dados, aplicado à suíte existente, não reportou ocorrências. Os 16 casos de detecção (CT-A01) foram identificados corretamente e não houve falso positivo em nenhuma das 32 entradas benignas (CT-A02) nem das 10 entradas benignas dos padrões personalizados (CT-A05). Os padrões personalizados por expressão regular e por valor literal foram detectados nos casos previstos (CT-A03 e CT-A04). Esse resultado deve ser lido com uma ressalva: os 16 casos exercitam sete dos nove padrões embutidos: não há caso de teste para o padrão de \textit{token} do Discord nem para o de chave secreta da AWS (Seção~\ref{sec:res_achados}).
+
+Na integração com o \textit{proxy} completo e destino simulado (Tabela~\ref{tab:res_int}), a requisição de IA com chaves fictícias chegou ao destino com as chaves substituídas, JSON válido e tamanho declarado coerente (CT-I01); a requisição sem dado sensível chegou idêntica (CT-I02); e os casos de filtragem por método, tipo de conteúdo, \textit{host} ignorado e modo \textit{whitelist} (CT-I04, CT-I06 e CT-I07) e o modo \textit{dry-run} (CT-I05) comportaram-se como especificado. Dos dez casos, seis foram aprovados, um foi aprovado com ressalva (CT-I08, em que o erro de conexão foi devolvido com status 500 em requisição HTTP simples), um refletiu uma limitação conhecida do projeto (CT-I03, em que uma chave em JSON sem campos de requisição de IA não é redigida, por decisão D07) e dois foram reprovados (CT-I09 e CT-I10, tratados na Seção~\ref{sec:res_achados}).
+
+\subsection{Desempenho}
+
+As medições de latência do analisador (Tabela~\ref{tab:desempenho}) mostram crescimento aproximadamente linear com o tamanho do corpo, a cerca de 2,7~ms por MiB, com vazão entre 371 e 474~MB/s (Figura~\ref{fig:latencia}). Para corpos de até 1~MiB, a média de 2,44~ms atende ao critério de 3~ms do RNF01; no limite de análise de 5~MiB, o tempo é de 13,5~ms, acima do limiar definido para o teste automatizado, mas pequeno diante do tempo de resposta de um LLM, que costuma ser medido em segundos. Para cargas pequenas, como as do teste de latência do repositório, a média foi de 0,95~\textmu s (P95 de 1,92~\textmu s e P99 de 5,06~\textmu s), da mesma ordem do valor documentado pelo projeto em outro equipamento (1,07~\textmu s). A memória alocada por operação é aproximadamente igual ao tamanho do corpo, porque a análise opera sobre uma cópia dele.
+
+\begin{figure}[htb]
+\centering
+\caption{Latência do analisador por tamanho do corpo da requisição}\label{fig:latencia}
+\includegraphics[width=0.88\textwidth]{figuras/latencia_analisador.pdf}
+\fonte{Elaborado pela equipe (2026), a partir da Tabela~\ref{tab:desempenho} (mediana de três execuções; escalas logarítmicas).}
+\end{figure}
+
+Esses números se referem ao \textbf{analisador}, e não ao \textit{proxy} de ponta a ponta. O custo do estabelecimento da conexão TLS, da emissão de certificados e do encaminhamento não foi medido, e a trilha de auditoria não permite estimá-lo, porque registra a duração da análise em milissegundos inteiros e, portanto, grava zero para análises que levam microssegundos (P03).
+
+\subsection{Situação dos requisitos}
+
+A Tabela~\ref{tab:sit_rf} classifica os 25 requisitos funcionais segundo a evidência obtida na verificação, e a Tabela~\ref{tab:sit_rnf} faz o mesmo para os 14 requisitos não funcionais. A classificação distingue o que foi \textit{verificado} do que apenas está \textit{implementado}: dez requisitos funcionais não têm evidência na rodada de 14/10/2026, por dependerem de testes manuais por plataforma, de ferramenta real ou de interação humana (CT-M01 a CT-M07), que não foram executados, ou, no caso da interface de terminal, de bibliotecas que não puderam ser resolvidas no ambiente de verificação.
+
+\begin{table}[htb]
+\centering
+\caption{Situação de verificação dos requisitos funcionais}\label{tab:sit_rf}
+\small
+\begin{tabular}{|p{4.0cm}|p{9.2cm}|p{1.2cm}|}
+\hline
+\textbf{Situação} & \textbf{Requisitos e observação} & \textbf{Qtde.} \\ \hline
+Verificado & RF06 a RF09, RF11 a RF14, RF16 e RF17: evidência favorável nos testes automatizados e de integração. & 10 \\ \hline
+Parcialmente verificado & RF01 (apenas HTTP com destino simulado, sem HTTPS); RF05 (corpos acima de 5~MiB são truncados, P02); RF10 (sete dos nove padrões testados; ver P15 e P16). & 3 \\ \hline
+Evidência desfavorável & RF15: a trilha de auditoria ficou incompleta e sujeita a corrida de dados no caso CT-I10 (P01). & 1 \\ \hline
+Sem evidência na rodada & RF02, RF03, RF04 (CA e interceptação TLS) e RF18 a RF24 (TUI, diagnóstico, encerramento e distribuição). & 10 \\ \hline
+Não implementado & RF25 (\textit{plugins} de padrões), adiado deliberadamente. & 1 \\ \hline
+\multicolumn{2}{|r|}{\textbf{Total}} & \textbf{25} \\ \hline
+\end{tabular}
+\fonte{Elaborado pela equipe (2026), a partir da Tabela~\ref{tab:rastreio} e dos resultados deste capítulo.}
+\end{table}
+
+{\small
+\begin{longtable}{|p{1.3cm}|p{3.0cm}|p{10.0cm}|}
+\caption{Situação de verificação dos requisitos não funcionais}\label{tab:sit_rnf}\\
+\hline
+\textbf{ID} & \textbf{Situação} & \textbf{Evidência} \\ \hline
+\endfirsthead
+\hline
+\textbf{ID} & \textbf{Situação} & \textbf{Evidência} \\ \hline
+\endhead
+RNF01 & Atendido & Média de 2,44~ms para corpos de 1~MiB (analisador). \\ \hline
+RNF02 & Não atendido & Corpo de 6~MiB chegou truncado ao destino (CT-I09, P02). \\ \hline
+RNF03 & Atendido no conjunto de teste & Zero falsos positivos em 42 entradas benignas (CT-A02, CT-A05). \\ \hline
+RNF04 & Atendido (inspeção) & Chave RSA de 4096 bits, gravada com permissão 0600; arquivos de certificado e chave excluídos do versionamento. \\ \hline
+RNF05 & Parcial & O esquema da trilha não contém campo para o conteúdo da requisição; porém o nome de padrões literais, que inclui o valor, é propagado à trilha (P17). \\ \hline
+RNF06 & Sem evidência & Verificação feita apenas em Linux. \\ \hline
+RNF07 & Sem evidência & Instalação por \textit{script} e por gerenciador de pacotes não testada (CT-M07). \\ \hline
+RNF08 & Sem evidência & Interface de terminal não executada; sem teste com usuários. \\ \hline
+RNF09 & Parcial & Erro explícito em destino inalcançável (CT-I08); falhas de integridade da trilha sob concorrência (CT-I10, P01). \\ \hline
+RNF10 & Parcial & Campos de identificação de requisição, sessão e máquina presentes no esquema; unicidade não verificada; trilha incompleta em CT-I10. \\ \hline
+RNF11 & Sem evidência & Compatibilidade com ferramentas reais não reexecutada (CT-M02). \\ \hline
+RNF12 & Atendido & Padrões e modos alteráveis por arquivo, sem recompilação (CT-A08). \\ \hline
+RNF13 & Parcial & Integração contínua, testes e documentação presentes; cobertura do pacote central de 31,8\%. \\ \hline
+RNF14 & Atendido (inspeção) & Licença Apache~2.0 no repositório. \\ \hline
+\end{longtable}
+}
+\noindent\fonte{Elaborado pela equipe (2026).}
+
+\subsection{Defeitos e achados adicionais}
+\label{sec:res_achados}
+
+Os cinco problemas registrados na Tabela~\ref{tab:problemas} (P01, P02, P03, P07 e P08) permanecem sem correção publicada: o ramo principal do repositório continua no \textit{commit} faebae9, o mesmo submetido à verificação. Entre eles, dois têm severidade alta: a condição de corrida no registrador de auditoria (P01), que comprometeu a integridade da trilha na execução com concorrência (CT-I10), e o truncamento de corpos acima de 5~MiB (P02), que entrega ao provedor uma requisição inválida (CT-I09).
+
+A elaboração deste capítulo incluiu uma revisão adicional do código-fonte dos padrões de detecção e do caminho dos nomes de padrões até a trilha de auditoria, que identificou três achados novos, resumidos na Tabela~\ref{tab:achados}. Diferentemente de P01 e P02, eles foram obtidos \textbf{por leitura do código}, e não por execução; sua confirmação por testes de regressão faz parte das correções propostas.
+
+\begin{table}[htb]
+\centering
+\caption{Achados adicionais da revisão do código (\textit{commit} faebae9)}\label{tab:achados}
+\small
+\begin{tabular}{|p{1.0cm}|p{7.0cm}|p{1.6cm}|p{4.6cm}|}
+\hline
+\textbf{ID} & \textbf{Descrição} & \textbf{Severidade} & \textbf{Correção proposta} \\ \hline
+P15 & O padrão \texttt{discord\_token} tem a mesma expressão regular do padrão \texttt{slack\_token} (\texttt{xox[baprs]-}). Tokens do Discord, que têm outro formato, não são reconhecidos; um comentário do próprio teste automatizado registra essa diferença. O requisito RF10 menciona o Discord. & Média & Implementar o formato correto, ou retirar o padrão e ajustar RF10 e a documentação; criar caso de teste. \\ \hline
+P16 & O padrão \texttt{aws\_secret\_key} exige o prefixo \texttt{wJalr}, que corresponde à chave secreta de exemplo da documentação da AWS. Chaves secretas reais são geradas aleatoriamente e, em geral, não o apresentam; o padrão tende a não detectá-las. Não há caso de teste para ele. & Alta & Substituir por detecção baseada em contexto (por exemplo, valor de 40 caracteres associado ao nome da variável) e testar com valores aleatórios no formato real. \\ \hline
+P17 & Para padrões personalizados do tipo literal, o nome do padrão é composto com o próprio valor sensível. Esse nome é registrado em \texttt{detected\_patterns} na trilha de auditoria e exibido no console, o que contraria o RNF05 (a trilha não deve conter os segredos detectados). & Alta & Usar apenas o nome do padrão e um índice; teste de regressão que verifique a ausência do valor na trilha. \\ \hline
+\end{tabular}
+\fonte{Elaborado pela equipe (2026), a partir da leitura do código-fonte.}
+\end{table}
+
+\subsection{Validação com usuários}
+\label{sec:test_usuarios}
+
+A validação do produto com usuários, prevista no planejamento (Capítulos~\ref{chp:req} e~\ref{chp:test}), não foi executada neste ciclo. Em consequência, os perfis da Tabela~\ref{tab:usuarios} e os requisitos de usabilidade e compatibilidade (RNF08 e RNF11) permanecem sem evidência empírica de uso por terceiros, e as afirmações deste trabalho sobre utilidade e aceitação limitam-se ao que foi observado por quem desenvolveu o artefato. 
+
+\section{Comparação com os Objetivos}
+\label{sec:res_comparacao}
+
+A Tabela~\ref{tab:objetivos} confronta cada objetivo específico, definidos na Seção~\ref{sec:intro_obj}, com as evidências produzidas e classifica seu atendimento.
+
+{\small
+\begin{longtable}{|p{1.1cm}|p{8.1cm}|p{2.6cm}|p{2.5cm}|}
+\caption{Atendimento dos objetivos específicos}\label{tab:objetivos}\\
+\hline
+\textbf{Obj.} & \textbf{Evidência} & \textbf{Situação} & \textbf{Ressalva} \\ \hline
+\endfirsthead
+\hline
+\textbf{Obj.} & \textbf{Evidência} & \textbf{Situação} & \textbf{Ressalva} \\ \hline
+\endhead
+OE1 & Cinco cadeias de busca; 15 trabalhos únicos analisados e 8 incluídos; lacuna caracterizada em três eixos (Capítulo~\ref{chp:fund}). & Atingido parcialmente & Base única (IEEE Xplore); casos reais sem fonte arbitrada; sem referência normativa;. \\ \hline
+OE2 & Cinco perfis de usuários, 25 requisitos funcionais e 14 não funcionais, com priorização e critérios de aceitação (Capítulo~\ref{chp:req}). & Atingido & Perfis não validados com usuários (L02). \\ \hline
+OE3 & Arquitetura, modelo de dados, interfaces e diagramas de casos de uso, sequência, fluxo e classes (Capítulo~\ref{chp:proj}). & Atingido & --- \\ \hline
+OE4 & 24 dos 25 requisitos funcionais implementados; 64 \textit{commits} em nove incrementos; 12 decisões registradas; documentação mantida (Capítulo~\ref{chp:dev}). & Atingido & Defeitos abertos (P01, P02, P15 a P17). \\ \hline
+OE5 & Dezesseis casos de detecção, zero falsos positivos em 42 entradas benignas, redação íntegra em CT-I01 (Seção~\ref{sec:res_resultados}). & Atingido parcialmente & Dados sintéticos; sete de nove padrões testados; truncamento em CT-I09; P15 a P17. \\ \hline
+OE6 & Latência e vazão do analisador de 1~KB a 5~MiB (Tabela~\ref{tab:desempenho}). & Atingido parcialmente & Apenas o analisador; latência de ponta a ponta e impacto na utilidade não medidos (L04). \\ \hline
+\end{longtable}
+}
+\noindent\fonte{Elaborado pela equipe (2026).}
+
+Três dos seis objetivos foram atingidos integralmente e três, parcialmente. O objetivo geral compreende três verbos: \textit{projetar} e \textit{implementar} foram atendidos (OE2 a OE4); \textit{avaliar} foi atendido de modo parcial (OE5 e OE6), porque a avaliação se restringiu à verificação do artefato em condições controladas. A leitura honesta dos resultados é, portanto, a de que o mecanismo foi construído e que seu núcleo de detecção e redação funciona para os casos testados e a baixo custo de análise, mas que a eficácia em tráfego real e a aceitação por usuários não foram demonstradas.
+
+Quanto à questão de pesquisa RQ5 (Tabela~\ref{tab:rqs}), os resultados respondem apenas à parte do custo computacional da análise, que é desprezível frente ao tempo de resposta de um LLM; a latência de ponta a ponta e a perda de utilidade causada pela redação permanecem em aberto.
+
+\section{Análise Crítica e Discussão}
+\label{sec:res_discussao}
+
+\subsection{O que os resultados de detecção sustentam e o que não sustentam}
+
+O resultado de zero falso positivo e de detecção de todos os casos positivos deve ser interpretado com cuidado. Os casos positivos e negativos foram escritos pelos próprios desenvolvedores, a partir dos formatos que os padrões foram desenhados para reconhecer; eles medem a \textit{conformidade} da implementação com a especificação, e não a revocação ou a precisão em tráfego real. Os achados P15 e P16 ilustram o limite desse tipo de teste: o conjunto de testes passa integralmente, e ainda assim dois dos nove padrões embutidos não cumprem, na prática, o que o requisito afirma, justamente os dois sem caso de teste.
+
+Há uma razão estrutural para o bom resultado em falsos positivos: os padrões embutidos são ancorados em prefixos de formatos específicos de provedores (como \texttt{sk-}, \texttt{ghp\_} ou \texttt{AKIA}), o que torna improvável que identificadores comuns os acionem. A mesma propriedade limita a revocação: credenciais sem prefixo característico, segredos de formato desconhecido, dados pessoais e código proprietário não são detectados, a menos que o usuário os descreva por padrões personalizados. Como a fundamentação teórica definiu o problema de forma ampla (credenciais, dados pessoais e código proprietário), há uma distância entre o problema e a cobertura efetiva do artefato, que o Capítulo~\ref{chp:conc} retoma.
+
+\subsection{Comparação com a literatura}
+
+Os trabalhos revisados que reportam métricas de detecção usam abordagens baseadas em aprendizado de máquina: \citeonline{rahman2025secret} obtêm F1 de 0,9852 combinando extração por expressões regulares e classificação por modelos de linguagem ajustados, \citeonline{tsebak2025enhancing} reportam redução de falsos positivos ao combinar um modelo contextual a um classificador de \textit{gradient boosting}, e \citeonline{sakapertana2025advancing} obtêm 80,96\% de acurácia com SVM na detecção de dados pessoais em respostas de API. Esses valores \textbf{não são comparáveis} aos deste trabalho: os conjuntos de dados, as tarefas e as métricas diferem, e o presente estudo não calculou precisão, revocação ou F1 sobre um corpus rotulado. O que se pode afirmar é a diferença de abordagem: a decisão D03 trocou cobertura por previsibilidade, com um estágio determinístico, auditável e de custo conhecido por requisição, ao passo que os estudos citados incorporam um estágio de inferência cujo custo de latência, como observado na Seção~\ref{sec:trabalhos_relacionados}, não é reportado.
+
+Nessa mesma direção, \citeonline{xu2025privacypreserving} destacam que as técnicas de computação segura impõem custos computacionais e de latência relevantes em cenários interativos; o custo de análise aqui medido, da ordem de milissegundos para corpos de até 1~MiB, situa a abordagem determinística no extremo oposto desse espectro, ao custo de uma proteção mais restrita. A seletividade defendida por \citeonline{pan2025selective}, calibrar a proteção conforme a sensibilidade em vez de aplicá-la de modo uniforme, aparece no mecanismo na ativação individual de padrões e no modo \textit{dry-run}, e foi verificada nos casos CT-A03 a CT-A05 e CT-A08; o que não foi avaliado é o efeito dessa seletividade sobre a utilidade das respostas do assistente.
+
+\subsection{Custo operacional}
+
+O resultado de desempenho sustenta que o analisador não é o gargalo do fluxo: com vazão acima de 370~MB/s, a análise de um corpo típico de requisição de assistente de código, de até algumas centenas de quilobytes, leva menos de 1~ms. Três ressalvas moderam essa conclusão. Primeiro, o custo de ponta a ponta não foi medido (Seção~\ref{sec:res_resultados}). Segundo, a análise copia o corpo e, por isso, o consumo de memória cresce com o tamanho das requisições e com a concorrência; o comportamento sob carga, com muitas requisições grandes simultâneas, não foi medido, e o único teste de concorrência (CT-I10) foi reprovado. Terceiro, as cargas das medições complementares usam código-fonte comum, de modo que corpos com estrutura muito diferente (por exemplo, dados codificados em Base64) podem comportar-se de outra forma.
+
+\subsection{Decisões de projeto e suas consequências}
+
+Os resultados permitem avaliar três decisões registradas na Tabela~\ref{tab:adr}. A decisão D07, de identificar requisições de IA pelo conteúdo do corpo, sustenta a independência de ferramenta e provedor, mas tem como custo que um segredo enviado em JSON sem os campos reconhecidos não é redigido (CT-I03); trata-se de uma escolha de escopo, que delimita a análise às requisições reconhecidamente de IA, ao custo de uma lacuna de proteção que o usuário precisa conhecer. A decisão D09, de registrar a auditoria de forma assíncrona e não bloqueante, protege a latência, mas está na origem da condição de corrida P01 e da possibilidade de perda de registros sob sobrecarga: a prioridade dada à experiência do desenvolvedor custou integridade da evidência, o que é uma tensão real entre os requisitos de desempenho e de governança. Já a decisão D04, de gerar uma CA exclusiva por máquina, mostrou-se adequada do ponto de vista de segurança (RNF04), mas concentra o risco do produto em um ativo, a chave da CA, que o usuário precisa proteger.
+
+O achado P17 evidencia uma tensão semelhante entre conveniência e privacidade: um nome de padrão que inclui o valor facilita a leitura do relatório, mas transforma a trilha, concebida para ser livre de segredos, em um local onde eles podem ser gravados.
+
+\subsection{Governança e auditabilidade}
+
+O mecanismo cumpre parte da função de governança descrita na fundamentação teórica: a política sobre o que não deve sair é aplicada de forma técnica e deixa um registro do que foi detectado, em quais destinos e com qual padrão, sem armazenar o conteúdo. Entretanto, a capacidade de \textit{produzir} evidência não equivale à de \textit{garantir} evidência. A trilha não é protegida contra adulteração, reside no mesmo equipamento que gera os eventos, pode perder registros sob carga (P01) e, para padrões literais, pode conter o próprio segredo (P17). Além disso, o mapeamento entre os padrões do produto e as categorias de dados de normas como a LGPD ou a ISO/IEC 27701 não foi feito, e a lacuna normativa registrada na fundamentação teórica permanece.
+
+\subsection{Ameaças à validade}
+
+Quanto à validade de construto, os testes foram escritos pelos próprios desenvolvedores, e a latência foi medida no analisador, não no fluxo completo. Quanto à validade interna, as medições de desempenho usam a mediana de três execuções, um número pequeno, e o ambiente (um processador Intel Xeon de 2,1~GHz) pode ter variações não controladas; o caso CT-I10 revelou comportamento não determinístico cuja causa não foi investigada. Quanto à validade externa, os resultados vêm de um único ambiente, com um destino simulado, e não se generalizam para outras plataformas, para HTTPS sobre ferramentas reais nem para o perfil de uso de equipes. A comparação com a literatura é qualitativa, pelas razões expostas acima.
+
+\section{Limitações}
+\label{sec:res_limitacoes}
+
+A Tabela~\ref{tab:limitacoes} consolida as limitações do estudo e do produto, com o seu efeito sobre os resultados e o tratamento proposto. As limitações L01 a L06 são do \textbf{estudo} (como se avaliou); as L07 a L12 são do \textbf{produto} (o que ele faz e não faz).
+
+{\small
+\begin{longtable}{|p{1.0cm}|p{6.3cm}|p{4.1cm}|p{3.3cm}|}
+\caption{Limitações do estudo e do produto}\label{tab:limitacoes}\\
+\hline
+\textbf{ID} & \textbf{Limitação} & \textbf{Efeito sobre os resultados} & \textbf{Tratamento} \\ \hline
+\endfirsthead
+\hline
+\textbf{ID} & \textbf{Limitação} & \textbf{Efeito sobre os resultados} & \textbf{Tratamento} \\ \hline
+\endhead
+L01 & Conjunto de teste sintético e escrito pela equipe (16 casos positivos e 42 negativos). & Mede conformidade, não precisão e revocação em tráfego real (OE5). & Corpus rotulado e cálculo de precisão, revocação e F1. \\ \hline
+L02 & Ausência de validação com usuários. & Usabilidade, aceitação e utilidade não avaliadas (RNF08, RNF11). & Estudo com desenvolvedores (Seção~\ref{sec:conc_futuros}). \\ \hline
+L03 & Verificação em um único ambiente (Linux, destino HTTP simulado); casos manuais CT-M01 a CT-M07 não executados. & Dez requisitos funcionais sem evidência; HTTPS e demais plataformas não verificados. & Execução do roteiro manual em três plataformas. \\ \hline
+L04 & Latência medida apenas no analisador; impacto da redação sobre a utilidade das respostas não medido. & OE6 e RQ5 atendidos parcialmente. & Medição de ponta a ponta; comparação de respostas com e sem redação. \\ \hline
+L05 & Cobertura de testes de 31,8\% no pacote central; sem testes do manipulador de requisições, da auditoria, da CA e do diagnóstico. & Defeitos como P01, P02 e P15 a P17 escaparam dos testes existentes. & Testes de regressão para cada defeito. \\ \hline
+L06 & Revisão da literatura restrita ao IEEE Xplore e a oito estudos; casos reais sem fonte arbitrada; sem referência normativa. & OE1 atendido parcialmente; justificativa e governança menos sustentadas. & Ampliar bases e fontes (Seção~\ref{sec:conc_futuros}). \\ \hline
+L07 & Detecção por padrões de credenciais de formato conhecido; sem detecção de código proprietário, dados pessoais ou segredos sem formato característico. & Cobertura efetiva menor que o problema definido; P15 e P16 a reduzem ainda mais. & Detecção híbrida e padrões de dados pessoais. \\ \hline
+L08 & Somente corpos de requisições de saída, \textit{POST} ou \textit{PUT}, JSON ou formulário, com campos de IA e até 5~MiB são analisados; respostas não são inspecionadas. & Segredos fora desse perfil (CT-I03, CT-I09) não são protegidos. & Ampliar tipos de conteúdo; tratar corpos grandes (P02). \\ \hline
+L09 & Interceptação depende de CA local confiável; clientes com fixação de certificado não funcionam; negociação restrita ao HTTP/1.1. & Ferramentas incompatíveis ficam sem proteção; a chave da CA é ativo crítico. & Documentar; avaliar HTTP/2. \\ \hline
+L10 & Defeitos de severidade alta em aberto: P01, P02, P16 e P17. & Integridade da trilha, das requisições grandes e a eficácia para AWS e padrões literais comprometidas. & Correção e teste de regressão. \\ \hline
+L11 & Configuração sem recarga a quente (P08); sem sistema de \textit{plugins} (RF25); sem SGBD. & Operação e análise da trilha menos práticas. & Recarga de configuração; banco embarcado. \\ \hline
+L12 & Trilha de auditoria local, sem proteção de integridade. & Evidência não é à prova de adulteração. & Encadeamento de \textit{hashes} ou assinatura. \\ \hline
+\end{longtable}
+}
+\noindent\fonte{Elaborado pela equipe (2026).}
